@@ -12,3 +12,4 @@ __pycache__/
 .mypy_cache/
 .idea/
 .vscode/
+LOCAL_NOTES.md
