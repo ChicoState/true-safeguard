@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}True Safeguard{% endblock %}</title>
+
+    {# Global styles #}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    {# Page-specific styles #}
+    {% block extra_css %}{% endblock %}
+  </head>
+  
+  <body>
+
+    {% block navbar %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+  </body>
+</html>
