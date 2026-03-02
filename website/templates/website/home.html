@@ -1,14 +1,147 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>True Safeguard</title>
-  </head>
-  <body>
-    <main>
-      <h1>True Safeguard</h1>
-      <p>Welcome to the True Safeguard site.</p>
-    </main>
-  </body>
-</html>
+{% extends "website/base.html" %}
+
+{% block title %}
+True Safeguard
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1>True Safeguard</h1>
+  <p>Welcome to the True Safeguard site.</p>
+
+  <h2>Top 5 Most Unsafe Media</h2>
+
+  <div class="danger-list">
+
+    {# Loop through real items later when database exists #}
+    {% for item in top_items %}
+      <div class="danger-item">
+
+        {# Title always visible #}
+        <button class="danger-title">{{ forloop.counter }}. {{ item.name }}</button>
+
+        {# Tags always visible #}
+        <p class="tags">
+          Tags:
+          {% for tag in item.tags.all %}
+            {{ tag.name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+
+        {# Hidden dropdown content #}
+        <div class="danger-content">
+          <p>{{ item.short_description }}</p>
+          <button class="see-more">See More</button>
+        </div>
+
+      </div>
+    {% empty %}
+
+      {# Placeholder items shown until database is added #}
+      <div class="danger-item">
+        <button class="danger-title">1. Placeholder Unsafe #1</button>
+        <p class="tags">Tags: Placeholder</p>
+        <div class="danger-content">
+          <p>This is a placeholder description.</p>
+          <button class="see-more">See More</button>
+        </div>
+      </div>
+
+      <div class="danger-item">
+        <button class="danger-title">2. Placeholder Unsafe #2</button>
+        <p class="tags">Tags: Placeholder</p>
+        <div class="danger-content">
+          <p>This is a placeholder description.</p>
+          <button class="see-more">See More</button>
+        </div>
+      </div>
+
+      <div class="danger-item">
+        <button class="danger-title">3. Placeholder Unsafe #3</button>
+        <p class="tags">Tags: Placeholder</p>
+        <div class="danger-content">
+          <p>This is a placeholder description.</p>
+          <button class="see-more">See More</button>
+        </div>
+      </div>
+
+      <div class="danger-item">
+        <button class="danger-title">4. Placeholder Unsafe #4</button>
+        <p class="tags">Tags: Placeholder</p>
+        <div class="danger-content">
+          <p>This is a placeholder description.</p>
+          <button class="see-more">See More</button>
+        </div>
+      </div>
+
+      <div class="danger-item">
+        <button class="danger-title">5. Placeholder Unsafe #5</button>
+        <p class="tags">Tags: Placeholder</p>
+        <div class="danger-content">
+          <p>This is a placeholder description.</p>
+          <button class="see-more">See More</button>
+        </div>
+      </div>
+
+    {% endfor %}
+
+  </div>
+</main>
+
+<style>
+  .danger-list {
+    margin-top: 20px;
+  }
+
+  .danger-item {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    padding-bottom: 10px;
+  }
+
+  .danger-title {
+    width: 100%;
+    text-align: left;
+    padding: 12px;
+    background: #f2f2f2;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .tags {
+    font-size: 14px;
+    color: #555;
+    padding: 0 12px;
+    margin-top: 6px;
+  }
+
+  .danger-content {
+    display: none;
+    padding: 12px;
+    background: #ffffff;
+  }
+
+  .see-more {
+    margin-top: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const titles = document.querySelectorAll(".danger-title");
+
+    titles.forEach(title => {
+      title.addEventListener("click", () => {
+        // Skip tags and open dropdown 
+        const content = title.nextElementSibling.nextElementSibling;
+        content.style.display = content.style.display === "block" ? "none" : "block";
+      });
+    });
+  });
+</script>
+{% endblock %}
