@@ -1,4 +1,9 @@
 {% extends "website/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/home.css' %}">
+{% endblock %}
 
 {% block title %}
 True Safeguard
@@ -6,21 +11,32 @@ True Safeguard
 
 {% block content %}
 <main>
-  <h1>True Safeguard</h1>
-  <p>Welcome to the True Safeguard site.</p>
 
-  <h2>Top 5 Most Unsafe Media</h2>
+  <div>
+    <h1>True Safeguard</h1>
+    <p>Welcome to the True Safeguard site.</p>
+  </div>
+
+  <section class="about-section">
+    <h2>About</h2>
+    <p>
+      True Safeguard is a platform that helps parents, educators, and individuals identify and understand potentially unsafe 
+      media, trends, and online content for the safety of their children. Our mission is to make them aware of certain media and online trends, 
+      by providing a platform to learn about recent media and online trends that may be harmful to children. We aim to empower users with knowledge 
+      and resources to make informed decisions about the media their children consume. With the help of our platform and the community, we can 
+      create a safer online environment for children and promote responsible media consumption.
+    </p>
+  </section>
+
+  <h2>Currently Trending Unsafe Media</h2>
 
   <div class="danger-list">
 
-    {# Loop through real items later when database exists #}
     {% for item in top_items %}
       <div class="danger-item">
 
-        {# Title always visible #}
         <button class="danger-title">{{ forloop.counter }}. {{ item.name }}</button>
 
-        {# Tags always visible #}
         <p class="tags">
           Tags:
           {% for tag in item.tags.all %}
@@ -28,7 +44,6 @@ True Safeguard
           {% endfor %}
         </p>
 
-        {# Hidden dropdown content #}
         <div class="danger-content">
           <p>{{ item.short_description }}</p>
           <button class="see-more">See More</button>
@@ -37,7 +52,6 @@ True Safeguard
       </div>
     {% empty %}
 
-      {# Placeholder items shown until database is added #}
       <div class="danger-item">
         <button class="danger-title">1. Placeholder Unsafe #1</button>
         <p class="tags">Tags: Placeholder</p>
@@ -88,56 +102,12 @@ True Safeguard
   </div>
 </main>
 
-<style>
-  .danger-list {
-    margin-top: 20px;
-  }
-
-  .danger-item {
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    overflow: hidden;
-    padding-bottom: 10px;
-  }
-
-  .danger-title {
-    width: 100%;
-    text-align: left;
-    padding: 12px;
-    background: #f2f2f2;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
-  .tags {
-    font-size: 14px;
-    color: #555;
-    padding: 0 12px;
-    margin-top: 6px;
-  }
-
-  .danger-content {
-    display: none;
-    padding: 12px;
-    background: #ffffff;
-  }
-
-  .see-more {
-    margin-top: 10px;
-    padding: 6px 12px;
-    cursor: pointer;
-  }
-</style>
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const titles = document.querySelectorAll(".danger-title");
 
     titles.forEach(title => {
       title.addEventListener("click", () => {
-        // Skip tags and open dropdown 
         const content = title.nextElementSibling.nextElementSibling;
         content.style.display = content.style.display === "block" ? "none" : "block";
       });
