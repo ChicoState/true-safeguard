@@ -1,6 +1,6 @@
 /* Banner */
 .banner {
-  height: 90vh;
+  height: 80vh;
   background: url('/static/website/images/gradientBanner.png') center/cover no-repeat;
   position: relative;
   display: flex;
@@ -12,7 +12,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(8, 8, 10, 0.6); /* dark overlay */
+  background: rgba(0,0,0,0.6); /* dark overlay */
 }
 
 .banner-content {
@@ -33,7 +33,6 @@
   margin: 0 auto;
 }
 
-
 /* White border */
 main {
   border-left: 2px solid rgb(255, 255, 255);
@@ -42,7 +41,6 @@ main {
   padding-right: 5px;
 }
 
-
 /* Centered section titles */
 main h2 {
   text-align: center;
@@ -50,67 +48,97 @@ main h2 {
   margin: 40px auto 20px auto;
 }
 
-
 /* About section */
 .about-section {
-  margin: 400px auto 500px auto; /* lower the about section + gap below */
+  margin: 150px auto 200px auto; /* lower the about section + gap below */
   max-width: 1000px;
   text-align: center;
 }
 
 .about-section h2 {
-  font-size: 30px;      /* size of about title */
+  font-size: 30px;
 }
 
 .about-section p {
-  font-size: 20px;      /* about text size */
+  font-size: 20px;
   line-height: 1.3;
 }
 
-
-/* Trending section */
-.danger-list {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 0 10px;
+/* Trending Carousel */
+.trend-carousel {
+  position: relative;
+  width: 80%;                 /* narrower container */
+  margin: 40px auto;          /* centered */
+  overflow: hidden;
+  padding: 20px 0;
 }
 
-.danger-item {
-  margin-bottom: 10px;
+.trend-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.5s ease;
+}
+
+/* Show 2 cards at a time */
+.trend-slide {
+  flex: 0 0 calc(50% - 20px);   /* 2 per row */
+  background: #29292b;
   border: 1px solid #a1a1a1;
   border-radius: 6px;
-  overflow: hidden;
-  padding-bottom: 10px;
+  padding: 25px;
+  color: white;
+  box-sizing: border-box;
+
+  min-width: 300px;             /* prevents shrinking too small */
+  max-width: 500px;             /* allows nice wide cards */
 }
 
-.danger-title {
-  width: 100%;
-  text-align: left;
-  padding: 15px;
-  background: #29292b;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  color: #ffffff;
+.trend-slide h3 {
+  margin-bottom: 10px;
+  font-size: 22px;
 }
 
-.tags {
+.trend-tags {
   font-size: 14px;
-  color: #ffffff;
-  padding: 0 12px;
-  margin-top: 6px;
+  margin-bottom: 10px;
+  color: #ccc;
 }
 
-.danger-content {
-  display: none;
-  padding: 12px;
+.trend-desc {
+  font-size: 16px;
+  margin-bottom: 15px;
 }
 
-.see-more {
-  margin-top: 10px;
-  padding: 6px 12px;
-  cursor: pointer;
+.trend-more {
+  padding: 8px 14px;
   background: #474749;
-  color: #ffffff;
   border: 1px solid #474749;
+  color: white;
+  cursor: pointer;
+}
+
+/* Carousel buttons */
+.trend-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 30px;
+  padding: 10px 15px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.trend-btn.prev {
+  left: -10px;
+}
+
+.trend-btn.next {
+  right: -10px;
+}
+
+.trend-btn:hover {
+  background: rgba(0,0,0,0.7);
 }
