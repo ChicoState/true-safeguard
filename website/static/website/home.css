@@ -12,7 +12,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.6); /* dark overlay */
+  background: rgba(20, 21, 29, 0.6); /* dark overlay */
 }
 
 .banner-content {
@@ -35,8 +35,8 @@
 
 /* White border */
 main {
-  border-left: 2px solid rgb(255, 255, 255);
-  border-right: 2px solid white;
+  border-left: 5px solid white;
+  border-right: 5px solid white;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -50,7 +50,7 @@ main h2 {
 
 /* About section */
 .about-section {
-  margin: 150px auto 200px auto; /* lower the about section + gap below */
+  margin: 350px auto 350px auto; /* lower the about section + gap below */
   max-width: 1000px;
   text-align: center;
 }
@@ -81,8 +81,8 @@ main h2 {
 
 /* Show 2 cards at a time */
 .trend-slide {
-  flex: 0 0 calc(50% - 20px);   /* 2 per row */
-  background: #29292b;
+  flex: 0 0 calc(50% - 20px);     /* determines amount of 'cards' shown */
+  background: #30303a;
   border: 1px solid #a1a1a1;
   border-radius: 6px;
   padding: 25px;
