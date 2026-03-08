@@ -1,3 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trending - TrueSafeguard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #0f172a;
+            color: white;
+            margin: 0;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #1e293b;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .risk {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .high { color: #ef4444; }
+        .medium { color: #facc15; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    🔥 What's Trending (Safety Watch)
+</div>
+
+<div class="container">
+
+    <div class="card">
+    <h2>TikTok Safety for Kids</h2>
+    <p>
+        TikTok remains highly addictive and exposes children to inappropriate content and online predators.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Addiction, negative impact on developing brains, exposure to sexualized content, predators.</li>
+        <li><strong>Parental Guidance:</strong> Consider limiting screen time, use parental controls, monitor app usage, educate children about online risks, and discuss responsible behavior online.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+    </div>
+
+    <div class="card">
+    <h2>Discord Safety for Teens</h2>
+    <p>
+        Teens use Discord for school and socializing, but public servers and poor moderation can expose them to grooming and inappropriate content.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> AI moderation flaws, exposure to adult content, grooming risks, privacy concerns.</li>
+        <li><strong>Parental Guidance:</strong> Encourage open communication, set boundaries on server access, teach privacy awareness, and check in occasionally while respecting teens’ autonomy.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+    </div>
+
+    <div class="card">
+    <h2>AI-Generated Content</h2>
+    <p>
+        AI-created media are growing trends that confuse and addict children.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Exposure to deepfakes, automated low-quality kids videos, overstimulation, endless scrolling.</li>
+        <li><strong>Parental Guidance:</strong> Limit screen time, review content beforehand, teach kids critical media literacy, encourage offline activities.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+    </div>
+
+    <div class="card">
+    <h2>Hidden Adult Content & Algorithm Loops</h2>
+    <p>
+        YouTube, TikTok, and other platforms can create “refresher loops” that expose children to inappropriate content unintentionally.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Inappropriate videos, addictive autoplay, lack of age filtering.</li>
+        <li><strong>Parental Guidance:</strong> Use platform content filters, enable “restricted mode”, watch videos with children occasionally, and discuss why some content is unsafe.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+    </div>
+
+    <div class="card">
+    <h2>Brainrot / Short-Form Content</h2>
+    <p>
+        Fast, repetitive videos on platforms like TikTok or YouTube Shorts can overstimulate kids and encourage addictive scrolling.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Attention issues, excessive screen time, exposure to harmful or misleading content.</li>
+        <li><strong>Parental Guidance:</strong> Set daily screen limits, encourage offline activities, watch content together, and discuss why some videos aren’t safe or healthy.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+    </div>
+
+
+</div>
+
+</body>
+</html>
 {% extends "website/base.html" %}
 {% block navbar %}
   {% include "navigation.html" %}
