@@ -1,0 +1,72 @@
+{% extends "website/base.html" %}
+
+{% block content %}
+<div class="resource-page">
+    
+    <h1>True-Safeguard: Parent Resources</h1>
+    <p>Simple tools and links to help manage family screen time.</p>
+
+    <hr> {% for section in categories %}
+        <div class="category-section">
+            <h2>{{ section.category_name }}</h2>
+            <p>{{ section.category_info }}</p>
+
+            <ul>
+                {% for item in section.links %}
+                    <li>
+                        <a href="{{ item.url }}" target="_blank"><strong>{{ item.title }}</strong></a>
+                        - {{ item.desc }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
+</div>
+
+<style>
+    /* This makes the page look clean without being "complex" */
+    .resource-page {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: white;
+        color: #333;
+    }
+
+    h1 { color: #2d5a27; }
+    
+    h2 { 
+        color: #2d5a27; 
+        margin-top: 30px;
+        border-bottom: 1px solid #eee; /* Just a thin underline */
+    }
+
+   /* Update this part in your <style> tag */
+    .category-explanation {
+        color: #444; 
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background: #fdfdfd;
+        padding: 15px;
+        border-left: 4px solid #2d5a27; /* Adds a nice green bar to the left */
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+    /* This styles the bullet points */
+    ul {
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    a {
+        color: #2d5a27;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
