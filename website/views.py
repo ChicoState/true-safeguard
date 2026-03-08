@@ -1,7 +1,18 @@
 from django.shortcuts import render
 
-
 def home(request):
+    return render(request, 'website/home.html')
+
+def apps(request):
+    return render(request, 'website/apps.html')
+
+def trends(request):
+    return render(request, 'website/trends.html')
+
+def blacklist(request):
+    return render(request, 'website/blacklist.html')
+
+def resources(request):
     resource_data = resource_data = [
         {
             'category_name': 'Recognizing Screen Fatigue & Overstimulation',
@@ -46,8 +57,5 @@ def home(request):
         }
     ]
 
-
-
-   
     return render(request, 'website/resources.html', {'categories': resource_data})
 
