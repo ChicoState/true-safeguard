@@ -9,3 +9,4 @@ urlpatterns = [
     path('resources/', views.resources, name='resources'),
     path('trends/',views.trends, name='trends')
 ]
+
