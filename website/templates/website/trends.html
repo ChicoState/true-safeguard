@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+{% extends "website/base.html" %}
+{% block navbar %}
+  {% include "navigation.html" %}
+{% endblock %}
+
+{% block content %}
 <html>
 <head>
     <title>Trending - TrueSafeguard</title>
@@ -111,11 +117,5 @@
 
 </body>
 </html>
-{% extends "website/base.html" %}
-{% block navbar %}
-  {% include "navigation.html" %}
 {% endblock %}
-{% block content %}
-<h1>Trends Page</h1>
-<p>This is a placeholder for the Trends page.</p>
-{% endblock %}
+s
