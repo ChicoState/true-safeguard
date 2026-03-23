@@ -1,0 +1,99 @@
+{% extends "website/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/apps.css' %}">
+{% endblock %}
+
+{% block title %}
+Apps
+{% endblock %}
+
+{% block content %}
+<main>
+
+    <div>
+        <h1>Apps</h1> <br>
+        <p>Games and Social Media you should be aware of as a parent.</p> <br>
+    </div>
+
+    <!-- <section class="about-section">
+        <h2>About</h2>
+        <p>
+        True Safeguard is a platform that helps parents, educators, and individuals identify and understand potentially unsafe 
+        media, trends, and online content for the safety of their children. Our mission is to make them aware of certain media and online trends, 
+        by providing a platform to learn about recent media and online trends that may be harmful to children. We aim to empower users with knowledge 
+        and resources to make informed decisions about the media their children consume. With the help of our platform and the community, we can 
+        create a safer online environment for children and promote responsible media consumption.
+        </p>
+    </section> -->
+
+    <h2>Currently Trending Unsafe Media</h2>
+
+  <div class="container">
+        <h2>Games</h2>
+        <ul class="cards">
+            <li class="card">
+            <div>
+                <h3 class="card-title">GTA series</h3>
+                <div class="card-content">Platform: Various <br> 
+                Warnings: Violence, Sexual Content, Blood and Gore, Strong Language</div>
+            </div>
+            <div class="card-link-wrapper">
+                <a href="" class="card-link"></a>
+            </div>
+            </li>
+            <li class="card">
+            <div>
+                <h3 class="card-title">Call of Duty series</h3>
+                <div class="card-content">Platform: Various <br>
+                Warnings: Violence, Blood and Gore, Strong Language, Mature Themes, Online Play</div>
+            </div>
+            <div class="card-link-wrapper">
+                <a href="" class="card-link"></a>
+            </div>
+            </li>
+        <!-- more cards here -->
+        </ul>
+    </div>
+
+    <br>    
+  <div class="container">
+        <h2>Social Media</h2>
+        <ul class="cards">
+            <li class="card">
+            <div>
+                <h3 class="card-title">Snapchat</h3>
+                <div class="card-content">Warnings: </div>
+            </div>
+            <div class="card-link-wrapper">
+                <a href="" class="card-link"></a>
+            </div>
+            </li>
+            <li class="card">
+            <div>
+                <h3 class="card-title">Instagram</h3>
+                <div class="card-content">Warnings: </div>
+            </div>
+            <div class="card-link-wrapper">
+                <a href="" class="card-link"></a>
+            </div>
+            </li>
+        <!-- more cards here -->
+        </ul>
+    </div>
+</main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const titles = document.querySelectorAll(".danger-title");
+
+    titles.forEach(title => {
+      title.addEventListener("click", () => {
+        const content = title.nextElementSibling.nextElementSibling;
+        content.style.display = content.style.display === "block" ? "none" : "block";
+      });
+    });
+  });
+</script>
+{% endblock %}
