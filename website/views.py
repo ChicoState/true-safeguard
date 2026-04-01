@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from django.contrib import messages
-
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 def home(request):
     return render(request, 'website/home.html')
@@ -68,21 +69,29 @@ def register(request):
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
-        # Check if passwords match
+        # 1. Passwords must match
         if password1 != password2:
             messages.error(request, "Passwords do not match.")
-            return redirect("register")
+            return render(request, "website/register.html")
 
-        # Check if username exists
+        # 2. Username must be unique
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken.")
-            return redirect("register")
+            return render(request, "website/register.html")
 
-        # Create user
+        # 3. Run Django's password validators
+        try:
+            validate_password(password1)
+        except ValidationError as e:
+            for error in e.messages:
+                messages.error(request, error)
+            return render(request, "website/register.html")
+
+        # 4. Create the user
         user = User.objects.create_user(username=username, password=password1)
         user.save()
 
-        messages.success(request, "Account created successfully. You can now log in.")
+        messages.success(request, "Account created successfully. Please log in.")
         return redirect("login")
 
     return render(request, "website/register.html")

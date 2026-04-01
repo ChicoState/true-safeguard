@@ -11,6 +11,14 @@
 
         <h2>Register</h2>
 
+        {% if messages %}
+            <div class="auth-messages">
+                {% for message in messages %}
+                    <p class="auth-error">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
 
