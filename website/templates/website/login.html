@@ -1,0 +1,38 @@
+{% extends "website/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="auth-container">
+    <div class="auth-box">
+
+        <h2>Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="auth-field">
+                <label>Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="auth-field">
+                <label>Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="auth-btn">Login</button>
+        </form>
+
+        <p class="switch-text">
+            Don't have an account?
+            <a href="{% url 'register' %}" class="switch-link">Sign up</a>
+        </p>
+
+    </div>
+</main>
+{% endblock %}
