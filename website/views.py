@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 def home(request):
     return render(request, 'website/home.html')
@@ -59,3 +63,35 @@ def resources(request):
 
     return render(request, 'website/resources.html', {'categories': resource_data})
 
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        # 1. Passwords must match
+        if password1 != password2:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "website/register.html")
+
+        # 2. Username must be unique
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken.")
+            return render(request, "website/register.html")
+
+        # 3. Run Django's password validators
+        try:
+            validate_password(password1)
+        except ValidationError as e:
+            for error in e.messages:
+                messages.error(request, error)
+            return render(request, "website/register.html")
+
+        # 4. Create the user
+        user = User.objects.create_user(username=username, password=password1)
+        user.save()
+
+        messages.success(request, "Account created successfully. Please log in.")
+        return redirect("login")
+
+    return render(request, "website/register.html")
