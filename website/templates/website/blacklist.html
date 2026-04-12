@@ -1,90 +1,135 @@
 {% extends "website/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/blacklist.css' %}">
+{% endblock %}
 
 {% block navbar %}
   {% include "navigation.html" %}
 {% endblock %}
 
 {% block content %}
-<header class="border-bottom border-secondary bg-dark">
-    <div class="container py-3 d-flex align-items-center justify-content-between">
-        <div>
-            <h1 class="h3 mb-0">Blacklist</h1>
-        </div>
-        <button class="btn btn-outline-light">Add to Blacklist</button>
+<!-- Hero Section -->
+<header class="blacklist-hero">
+    <div class="container">
+        <h1>Blacklist</h1>
+        <p class="hero-subtitle">A simple guide for parents to identify apps, games, and websites that may not be age-appropriate for children.</p>
+        <p class="hero-description">Review our recommendations below to make informed decisions about the digital content your children access.</p>
     </div>
 </header>
 
-<main class="container py-4">
-    <section class="row g-4">
-        <div class="col-12">
-            <div class="card shadow-sm bg-black text-light border-secondary">
-                <div class="card-body">
-                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-3">
-                        <h2 class="h5 mb-0">Current Blacklist</h2>
-                        <div class="input-group w-auto">
-                            <input
-                                type="search"
-                                class="form-control bg-dark text-light border-secondary"
-                                placeholder="Search by name or ID"
-                                aria-label="Search"
-                            />
-                            <button class="btn btn-outline-light" type="button">Search</button>
-                        </div>
+<main class="container blacklist-main">
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="search-input">Search</label>
+                <input type="text" id="search-input" class="filter-input" placeholder="Search by name...">
+            </div>
+            
+            <div class="filter-group">
+                <label for="age-filter">Age Group</label>
+                <select id="age-filter" class="filter-select">
+                    <option value="">All Ages</option>
+                    <option value="Toddlers">Toddlers</option>
+                    <option value="Elementary">Elementary</option>
+                    <option value="Middle School">Middle School</option>
+                    <option value="Teens">Teens</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="category-filter">Category</label>
+                <select id="category-filter" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="Apps">Apps</option>
+                    <option value="Games">Games</option>
+                    <option value="Social Media">Social Media</option>
+                    <option value="Websites">Websites</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="risk-filter">Risk Level</label>
+                <select id="risk-filter" class="filter-select">
+                    <option value="">All Levels</option>
+                    <option value="High">High Risk</option>
+                    <option value="Medium">Medium Risk</option>
+                    <option value="Low">Low Risk</option>
+                </select>
+            </div>
+            
+            <div class="filter-group filter-actions">
+                <button id="reset-filters" class="btn-reset">Reset Filters</button>
+            </div>
+        </div>
+        
+        <div class="results-count">
+            <span id="results-count">{{ blacklist_items|length }}</span> items found
+        </div>
+    </section>
+
+    <!-- Results Grid -->
+    <section class="results-section">
+        <div class="card-grid" id="card-grid">
+            {% for item in blacklist_items %}
+            <article class="blacklist-card" 
+                     data-name="{{ item.name|lower }}" 
+                     data-category="{{ item.category }}" 
+                     data-age="{{ item.age_group }}" 
+                     data-risk="{{ item.risk_level }}">
+                <div class="card-header">
+                    <h3 class="card-title">{{ item.name }}</h3>
+                    <span class="risk-badge risk-{{ item.risk_level|lower }}">{{ item.risk_level }} Risk</span>
+                </div>
+                
+                <div class="card-badges">
+                    <span class="category-badge">{{ item.category }}</span>
+                    <span class="age-badge">{{ item.age_group }}</span>
+                </div>
+                
+                <p class="card-description">{{ item.short_description }}</p>
+                
+                <button class="btn-learn-more" data-target="details-{{ item.id }}">
+                    <span class="btn-text">Learn More</span>
+                    <span class="btn-icon">▼</span>
+                </button>
+                
+                <div class="card-details" id="details-{{ item.id }}">
+                    <div class="details-section">
+                        <h4>Why It's Flagged</h4>
+                        <ul>
+                            {% for reason in item.flagged_reasons %}
+                            <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Show</th>
-                                    <th scope="col">Reason</th>
-                                    <th scope="col">Risk</th>
-                                    <th scope="col">Updated</th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">Euphoria</div>
-                                        <small class="text-secondary">TV-MA</small>
-                                    </td>
-                                    <td>Explicit sexual content and drug use</td>
-                                    <td><span class="badge text-bg-danger">High</span></td>
-                                    <td>Feb 21, 2026</td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-light">Details</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">Game of Thrones</div>
-                                        <small class="text-secondary">TV-MA</small>
-                                    </td>
-                                    <td>Graphic violence and sexual content</td>
-                                    <td><span class="badge text-bg-danger">High</span></td>
-                                    <td>Feb 19, 2026</td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-light">Details</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">The Boys</div>
-                                        <small class="text-secondary">TV-MA</small>
-                                    </td>
-                                    <td>Extreme violence and crude language</td>
-                                    <td><span class="badge text-bg-danger">High</span></td>
-                                    <td>Feb 18, 2026</td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-light">Details</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    
+                    <div class="details-section">
+                        <h4>Tips for Parents</h4>
+                        <ul>
+                            {% for tip in item.parent_tips %}
+                            <li>{{ tip }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
+            </article>
+            {% endfor %}
+        </div>
+        
+        <!-- No Results Message -->
+        <div class="no-results" id="no-results" style="display: none;">
+            <div class="no-results-content">
+                <span class="no-results-icon">🔍</span>
+                <h3>No Results Found</h3>
+                <p>Try adjusting your filters or search terms.</p>
+                <button id="clear-search" class="btn-reset">Clear Filters</button>
             </div>
         </div>
     </section>
 </main>
+
+<script src="{% static 'website/blacklist.js' %}"></script>
 {% endblock %}

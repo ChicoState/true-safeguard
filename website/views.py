@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from .models import BlacklistItem
 
 def home(request):
     return render(request, 'website/home.html')
@@ -14,7 +15,8 @@ def trends(request):
     return render(request, 'website/trends.html')
 
 def blacklist(request):
-    return render(request, 'website/blacklist.html')
+    blacklist_items = BlacklistItem.objects.all()
+    return render(request, 'website/blacklist.html', {'blacklist_items': blacklist_items})
 
 def resources(request):
     resource_data = resource_data = [
@@ -95,3 +97,6 @@ def register(request):
         return redirect("login")
 
     return render(request, "website/register.html")
+
+def login_view(request):
+    return render(request, "website/login.html")

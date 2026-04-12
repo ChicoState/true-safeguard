@@ -1,0 +1,448 @@
+/* Blacklist Page Styles */
+
+/* Hero Section */
+.blacklist-hero {
+    background: linear-gradient(135deg, #2a2a3d 0%, #1e1e27 100%);
+    padding: 3rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.blacklist-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #b8b8c8;
+    max-width: 700px;
+    margin: 0 auto 0.75rem;
+    line-height: 1.6;
+}
+
+.hero-description {
+    font-size: 1rem;
+    color: #8888a0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Main Container */
+.blacklist-main {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+}
+
+/* Filter Section */
+.filter-section {
+    background: #252532;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a0a0b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-input,
+.filter-select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #3a3a4d;
+    border-radius: 8px;
+    background: #1e1e27;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.filter-input::placeholder {
+    color: #6a6a80;
+}
+
+.filter-select option {
+    background: #1e1e27;
+    color: #ffffff;
+}
+
+.filter-actions {
+    flex: 0 0 auto;
+    min-width: auto;
+}
+
+.btn-reset {
+    padding: 0.75rem 1.5rem;
+    background: #3a3a4d;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-reset:hover {
+    background: #4a4a60;
+}
+
+.results-count {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #3a3a4d;
+    font-size: 0.9rem;
+    color: #8888a0;
+}
+
+#results-count {
+    font-weight: 700;
+    color: #6366f1;
+}
+
+/* Card Grid */
+.results-section {
+    min-height: 400px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Blacklist Cards */
+.blacklist-card {
+    background: #252532;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.blacklist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.blacklist-card.hidden {
+    display: none;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+/* Risk Badges */
+.risk-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.risk-high {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.risk-medium {
+    background: rgba(251, 146, 60, 0.2);
+    color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+.risk-low {
+    background: rgba(250, 204, 21, 0.2);
+    color: #fcd34d;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+/* Category and Age Badges */
+.card-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.category-badge,
+.age-badge {
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.category-badge {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.age-badge {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+/* Card Description */
+.card-description {
+    color: #b8b8c8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Learn More Button */
+.btn-learn-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #3a3a4d;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-learn-more:hover {
+    background: #4a4a60;
+}
+
+.btn-learn-more.active {
+    background: #6366f1;
+}
+
+.btn-learn-more.active .btn-icon {
+    transform: rotate(180deg);
+}
+
+.btn-icon {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+/* Card Details (Expandable) */
+.card-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.card-details.expanded {
+    max-height: 600px;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #3a3a4d;
+}
+
+.details-section {
+    margin-bottom: 1.25rem;
+}
+
+.details-section:last-child {
+    margin-bottom: 0;
+}
+
+.details-section h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.details-section h4::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: #6366f1;
+    border-radius: 2px;
+}
+
+.details-section ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.details-section li {
+    color: #b8b8c8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.details-section li:last-child {
+    margin-bottom: 0;
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.no-results-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.no-results-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.no-results h3 {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.no-results p {
+    color: #8888a0;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blacklist-hero {
+        padding: 2rem 1rem;
+    }
+    
+    .blacklist-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .filter-section {
+        position: relative;
+        padding: 1rem;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        width: 100%;
+        min-width: 100%;
+    }
+    
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .risk-badge {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .blacklist-hero h1 {
+        font-size: 1.75rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .card-title {
+        font-size: 1.15rem;
+    }
+}
+
+/* Animation for cards appearing */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.blacklist-card {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.blacklist-card:nth-child(1) { animation-delay: 0.05s; }
+.blacklist-card:nth-child(2) { animation-delay: 0.1s; }
+.blacklist-card:nth-child(3) { animation-delay: 0.15s; }
+.blacklist-card:nth-child(4) { animation-delay: 0.2s; }
+.blacklist-card:nth-child(5) { animation-delay: 0.25s; }
+.blacklist-card:nth-child(6) { animation-delay: 0.3s; }
+.blacklist-card:nth-child(7) { animation-delay: 0.35s; }
+.blacklist-card:nth-child(8) { animation-delay: 0.4s; }
+.blacklist-card:nth-child(9) { animation-delay: 0.45s; }
+.blacklist-card:nth-child(10) { animation-delay: 0.5s; }
