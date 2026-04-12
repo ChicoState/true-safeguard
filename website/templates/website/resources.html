@@ -1,75 +1,107 @@
 {% extends "website/base.html" %}
-{% block navbar %}
-  {% include "navigation.html" %}
+
+{% load static %} 
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/resources.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="resource-page">
-    
-    <h1>True-Safeguard: Parent Resources</h1>
-    <p>Simple tools and links to help manage family screen time.</p>
+<div class="container resource-page-wrapper">
 
-    <hr> {% for section in categories %}
-        <div class="category-section">
-            <h2>{{ section.category_name }}</h2>
-            <p>{{ section.category_info }}</p>
-
-            <ul>
-                {% for item in section.links %}
-                    <li>
-                        <a href="{{ item.url }}" target="_blank"><strong>{{ item.title }}</strong></a>
-                        - {{ item.desc }}
-                    </li>
-                {% endfor %}
-            </ul>
+    <div class="row mb-5">
+        <div class="col-12 p-5 rounded-5 glass-header text-center shadow-sm">
+            <h1 class="display-4 fw-bold mb-2" style="color: #f0f3ef;">True-Safeguard Portal</h1>
+            <p class="lead mx-auto fw-bold" style="color: #edf1ed; max-width: 700px;">
+                Empowering parents with tools to recognize screen fatigue and foster healthy, offline connections in our community.
+            </p>
         </div>
-    {% endfor %}
+    </div>
+
+    <div class="row mb-5">
+        {% for section in categories|slice:":3" %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="p-4 rounded-4 shadow-sm h-100 d-flex flex-column lively-card bg-white">
+                <div class="mb-3">
+                    <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle mb-2">
+                        Resource Guide
+                    </span>
+                    <h3 class="fw-bold" style="color: #2d5a27;">{{ section.category_name }}</h3>
+                </div>
+
+                <p class="text-muted mb-4 flex-grow-1">
+                    {{ section.category_info }}
+                </p>
+                
+                <div class="mt-auto d-flex flex-wrap gap-2">
+                    {% for item in section.links %}
+                        <a href="{{ item.url }}" target="_blank" class="resource-pill rounded-pill px-3 py-2 small">
+                            <i class="bi bi-link-45deg"></i> {{ item.title }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="p-5 rounded-4 shadow-sm lively-card border-2 border-success border bg-white">
+                <div class="row align-items-center">
+                    <div class="col-md-4 border-end border-success-subtle pe-md-4">
+                        <h2 class="fw-bold" style="color: #2d5a27;">Beyond the Screen</h2>
+                        <p class="text-muted">Break the digital loop with "Slow Tech" activities like Chess, Puzzles, or Reading. These help reset attention spans and emotional balance.</p>
+                        <a href="https://www.buttecounty.net/148/Library" target="_blank" class="btn btn-success rounded-pill px-4 mt-2">
+                            <i class="bi bi-book me-2"></i>Chico Library
+                        </a>
+                    </div>
+
+                    <div class="col-md-8 ps-md-5 mt-4 mt-md-0">
+                        <div class="row">
+                            {% for activity in offline_activities %}
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex align-items-start">
+                                    <div class="badge bg-success-subtle text-success rounded-circle p-2 me-3 shadow-sm">
+                                        <i class="bi bi-stars"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1" style="color: #1a3317;">{{ activity.title }}</h6>
+                                        <p class="small text-muted mb-0">{{ activity.desc }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mt-5">
+        <h5 class="text-uppercase text-muted mb-4 fw-bold" style="letter-spacing: 2px; font-size: 0.8rem;">Quick Local Access</h5>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="https://www.chicorec.gov" target="_blank" class="d-block p-3 bg-success text-white rounded-pill shadow-sm text-decoration-none lively-card fw-bold">
+                <i class="bi bi-geo-alt-fill me-2"></i> Chico CARD
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="#" class="d-block p-3 bg-success text-white rounded-pill shadow-sm text-decoration-none lively-card fw-bold">
+                <i class="bi bi-file-earmark-check me-2"></i> Family Contract
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="#" class="d-block p-3 bg-success text-white rounded-pill shadow-sm text-decoration-none lively-card fw-bold">
+                <i class="bi bi-moon-stars-fill me-2"></i> Sleep Guide
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="#" class="d-block p-3 bg-success text-white rounded-pill shadow-sm text-decoration-none lively-card fw-bold">
+                <i class="bi bi-map-fill me-2"></i> Nature Walks
+            </a>
+        </div>
+    </div>
 
 </div>
-
-<style>
-    /* This makes the page look clean without being "complex" */
-    .resource-page {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: white;
-        color: #333;
-    }
-
-    h1 { color: #2d5a27; }
-    
-    h2 { 
-        color: #2d5a27; 
-        margin-top: 30px;
-        border-bottom: 1px solid #eee; /* Just a thin underline */
-    }
-
-   /* Update this part in your <style> tag */
-    .category-explanation {
-        color: #444; 
-        font-size: 1.1rem;
-        line-height: 1.6;
-        background: #fdfdfd;
-        padding: 15px;
-        border-left: 4px solid #2d5a27; /* Adds a nice green bar to the left */
-        margin-bottom: 20px;
-        font-style: italic;
-    }
-    /* This styles the bullet points */
-    ul {
-        padding-left: 20px;
-    }
-
-    li {
-        margin-bottom: 10px;
-    }
-
-    a {
-        color: #2d5a27;
-        text-decoration: underline;
-    }
-</style>
 {% endblock %}
