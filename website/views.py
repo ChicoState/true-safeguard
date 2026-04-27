@@ -3,9 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import BlacklistItem
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import BlacklistItem, ForumPost
 
 def home(request):
+
     return render(request, 'website/home.html')
 
 def apps(request):
@@ -100,3 +103,38 @@ def register(request):
 
 def login_view(request):
     return render(request, "website/login.html")
+
+def forum(request):
+    posts = ForumPost.objects.all()
+    return render(request, 'website/forum.html', {'posts': posts})
+
+@login_required
+def create_post(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+
+        ForumPost.objects.create(
+            author=request.user,
+            title=title,
+            content=content
+        )
+
+        return redirect("forum")
+
+    return render(request, "website/create_post.html")
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id)
+
+    if post.author != request.user:
+        messages.error(request, "You can only delete your own posts.")
+        return redirect("forum")
+
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "Post deleted.")
+        return redirect("forum")
+
+    return redirect("forum")

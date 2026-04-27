@@ -1,0 +1,53 @@
+{% extends "website/base.html" %}
+
+{% block title %}
+Parent Community
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1>Parent Community</h1>
+    <p>Discuss online safety, share advice, and ask questions with other parents.</p>
+
+    <hr>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="btn btn-primary mb-3">
+            Create Post
+        </a>
+    {% else %}
+        <p>
+            <a href="{% url 'login' %}">Login</a> to create a post.
+        </p>
+    {% endif %}
+
+    {% for post in posts %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>{{ post.title }}</h4>
+                <p>{{ post.content }}</p>
+
+                <small class="text-muted">
+                    Posted by {{ post.author.username }} on {{ post.created_at }}
+                </small>
+
+                <br>
+
+                {% if user == post.author %}
+                    <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm mt-2">
+                            Delete
+                        </button>
+                    </form>
+                {% endif %}
+
+            </div>
+        </div>
+    {% empty %}
+        <p>No posts yet</p>
+    {% endfor %}
+
+</div>
+{% endblock %}

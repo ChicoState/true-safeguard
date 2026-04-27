@@ -13,4 +13,9 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
 
     path('register/', views.register, name='register'),
+
+    path('forum/', views.forum, name='forum'),
+    path('forum/create/', views.create_post, name='create_post'),
+    path('forum/delete/<int:post_id>/', views.delete_post, name='delete_post'),
 ]
+
