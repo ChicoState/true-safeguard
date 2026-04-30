@@ -1,0 +1,22 @@
+{% extends "website/base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1>Notifications</h1>
+
+    {% for notification in notifications %}
+        <div class="border rounded p-2 mb-2">
+            <p class="mb-1">{{ notification.message }}</p>
+            <small class="text-muted">{{ notification.created_at }}</small>
+        </div>
+    {% empty %}
+        <p class="text-muted">No notifications yet.</p>
+    {% endfor %}
+
+</div>
+{% endblock %}

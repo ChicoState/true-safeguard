@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import BlacklistItem, ForumPost
+from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notification
 
 def home(request):
 
@@ -108,17 +108,63 @@ def forum(request):
     posts = ForumPost.objects.all()
     return render(request, 'website/forum.html', {'posts': posts})
 
+def profile_detail(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=profile_user)
+    posts = ForumPost.objects.filter(author=profile_user)
+
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = profile.followers.filter(id=request.user.id).exists()
+
+    return render(request, "website/profile.html", {
+        "profile_user": profile_user,
+        "profile": profile,
+        "posts": posts,
+        "is_following": is_following,
+    })
+
+
+@login_required
+def follow_user(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=profile_user)
+
+    if profile_user == request.user:
+        messages.error(request, "You cannot follow yourself.")
+        return redirect("profile_detail", username=username)
+
+    if profile.followers.filter(id=request.user.id).exists():
+        profile.followers.remove(request.user)
+    else:
+        profile.followers.add(request.user)
+
+        Notification.objects.create(
+            user=profile_user,
+            message=f"{request.user.username} followed you."
+        )
+
+    return redirect("profile_detail", username=username)
+
 @login_required
 def create_post(request):
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
 
-        ForumPost.objects.create(
+        post = ForumPost.objects.create(
             author=request.user,
             title=title,
             content=content
         )
+
+        profile = get_object_or_404(Profile, user=request.user)
+
+        for follower in profile.followers.all():
+            Notification.objects.create(
+                user=follower,
+                message=f"{request.user.username} created a new post: {post.title}"
+            )
 
         return redirect("forum")
 
@@ -138,3 +184,86 @@ def delete_post(request, post_id):
         return redirect("forum")
 
     return redirect("forum")
+
+@login_required
+def vote_post(request, post_id, vote_value):
+    post = get_object_or_404(ForumPost, id=post_id)
+
+    # Convert 0 → -1 for downvote
+    if vote_value == 0:
+        vote_value = -1
+
+    if vote_value not in [1, -1]:
+        return redirect("forum")
+
+    vote, created = PostVote.objects.get_or_create(
+        user=request.user,
+        post=post,
+        defaults={"value": vote_value}
+    )
+
+    if not created:
+        if vote.value == vote_value:
+            vote.delete()  # remove vote if clicking same again
+        else:
+            vote.value = vote_value  # switch vote
+            vote.save()
+
+    return redirect("forum")
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id)
+
+    if request.method == "POST":
+        content = request.POST.get("content")
+
+        if content:
+            Comment.objects.create(
+                author=request.user,
+                post=post,
+                content=content
+            )
+
+    return redirect("forum")
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id)
+
+    if post.author != request.user:
+        messages.error(request, "You can only edit your own posts.")
+        return redirect("forum")
+
+    if request.method == "POST":
+        post.title = request.POST.get("title")
+        post.content = request.POST.get("content")
+        post.save()
+        messages.success(request, "Post updated.")
+        return redirect("forum")
+
+    return render(request, "website/edit_post.html", {"post": post})
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if comment.author != request.user:
+        messages.error(request, "You can only edit your own comments.")
+        return redirect("forum")
+
+    if request.method == "POST":
+        comment.content = request.POST.get("content")
+        comment.save()
+        messages.success(request, "Comment updated.")
+        return redirect("forum")
+
+    return render(request, "website/edit_comment.html", {"comment": comment})
+
+@login_required
+def notifications(request):
+    user_notifications = request.user.notifications.all()
+
+    return render(request, "website/notifications.html", {
+        "notifications": user_notifications
+    })

@@ -1,0 +1,50 @@
+{% extends "website/base.html" %}
+
+{% block title %}
+{{ profile_user.username }}'s Profile
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1>{{ profile_user.username }}'s Profile</h1>
+
+    <p>
+        <strong>Followers:</strong> {{ profile.follower_count }}
+    </p>
+
+    {% if profile.bio %}
+        <p>{{ profile.bio }}</p>
+    {% else %}
+        <p class="text-muted">No bio yet.</p>
+    {% endif %}
+
+    {% if user.is_authenticated and user != profile_user %}
+        <form method="post" action="{% url 'follow_user' profile_user.username %}">
+            {% csrf_token %}
+            {% if is_following %}
+                <button type="submit" class="btn btn-secondary">Unfollow</button>
+            {% else %}
+                <button type="submit" class="btn btn-primary">Follow</button>
+            {% endif %}
+        </form>
+    {% endif %}
+
+    <hr>
+
+    <h3>{{ profile_user.username }}'s Posts</h3>
+
+    {% for post in posts %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ post.title }}</h5>
+                <p>{{ post.content }}</p>
+                <small class="text-muted">{{ post.created_at }}</small>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">No posts yet.</p>
+    {% endfor %}
+
+</div>
+{% endblock %}

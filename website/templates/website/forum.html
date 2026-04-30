@@ -13,33 +13,121 @@ Parent Community
     <hr>
 
     {% if user.is_authenticated %}
-        <a href="{% url 'create_post' %}" class="btn btn-primary mb-3">
-            Create Post
-        </a>
+        <a href="{% url 'create_post' %}" class="btn btn-primary mb-3">Create Post</a>
     {% else %}
-        <p>
-            <a href="{% url 'login' %}">Login</a> to create a post.
-        </p>
+        <p><a href="{% url 'login' %}">Login</a> to create a post or comment.</p>
     {% endif %}
 
     {% for post in posts %}
         <div class="card mb-3">
             <div class="card-body">
+
+                <div class="d-flex align-items-center mb-2">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'vote_post' post.id 1 %}" class="btn btn-success btn-sm me-1">▲</a>
+                    {% endif %}
+
+                    <strong class="mx-2">{{ post.vote_score }}</strong>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'vote_post' post.id 0 %}" class="btn btn-danger btn-sm ms-1">▼</a>
+                    {% endif %}
+                </div>
+
                 <h4>{{ post.title }}</h4>
                 <p>{{ post.content }}</p>
 
                 <small class="text-muted">
-                    Posted by {{ post.author.username }} on {{ post.created_at }}
+                    Posted by 
+                    <a href="{% url 'profile_detail' post.author.username %}">
+                        {{ post.author.username }}
+                    </a>
+                    on {{ post.created_at }}
                 </small>
 
                 <br>
 
                 {% if user == post.author %}
+                    <a href="{% url 'edit_post' post.id %}" class="btn btn-warning btn-sm mt-2">
+                        Edit
+                    </a>
+
                     <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm mt-2">
                             Delete
                         </button>
+                    </form>
+                {% endif %}
+
+                <hr>
+
+                <h6>Comments</h6>
+
+                {% if post.comments.all %}
+                    {% with first_comment=post.comments.all.0 %}
+                        <div class="border rounded p-2 mb-2">
+                            <p class="mb-1">{{ first_comment.content }}</p>
+
+                            <small class="text-muted">
+                                Comment by 
+                                <a href="{% url 'profile_detail' first_comment.author.username %}">
+                                    {{ first_comment.author.username }}
+                                </a>
+                                on {{ first_comment.created_at }}
+                            </small>
+
+                            {% if user == first_comment.author %}
+                                <br>
+                                <a href="{% url 'edit_comment' first_comment.id %}" class="btn btn-warning btn-sm mt-1">
+                                    Edit
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endwith %}
+
+                    {% if post.comments.all|length > 1 %}
+                        <button class="btn btn-link btn-sm p-0 mb-2"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#comments-{{ post.id }}">
+                            Show more comments
+                        </button>
+
+                        <div class="collapse" id="comments-{{ post.id }}">
+                            {% for comment in post.comments.all %}
+                                {% if not forloop.first %}
+                                    <div class="border rounded p-2 mb-2">
+                                        <p class="mb-1">{{ comment.content }}</p>
+
+                                        <small class="text-muted">
+                                            Comment by 
+                                            <a href="{% url 'profile_detail' comment.author.username %}">
+                                                {{ comment.author.username }}
+                                            </a>
+                                            on {{ comment.created_at }}
+                                        </small>
+
+                                        {% if user == comment.author %}
+                                            <br>
+                                            <a href="{% url 'edit_comment' comment.id %}" class="btn btn-warning btn-sm mt-1">
+                                                Edit
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">No comments yet.</p>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_comment' post.id %}" class="mt-2">
+                        {% csrf_token %}
+                        <textarea name="content" class="form-control mb-2" rows="2" placeholder="Write a comment..." required></textarea>
+                        <button type="submit" class="btn btn-secondary btn-sm">Add Comment</button>
                     </form>
                 {% endif %}
 
