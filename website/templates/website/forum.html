@@ -20,22 +20,14 @@ Parent Community
 
     <form method="get" action="{% url 'forum' %}" class="mb-3">
         <div class="input-group">
-            <input type="text"
-                   name="q"
-                   class="form-control"
-                   placeholder="Search by keyword or username..."
-                   value="{{ search_query }}">
-
+            <input type="text" name="q" class="form-control" placeholder="Search by keyword or username..." value="{{ search_query }}">
             {% if selected_category %}
                 <input type="hidden" name="category" value="{{ selected_category }}">
             {% endif %}
-
             {% if selected_sort %}
                 <input type="hidden" name="sort" value="{{ selected_sort }}">
             {% endif %}
-
             <button type="submit" class="btn btn-primary">Search</button>
-
             {% if search_query %}
                 <a href="{% url 'forum' %}" class="btn btn-secondary">Clear</a>
             {% endif %}
@@ -44,37 +36,17 @@ Parent Community
 
     <div class="mb-3">
         <strong>Filter by category:</strong>
-
-        <a href="{% url 'forum' %}?sort={{ selected_sort }}"
-           class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
-            All
-        </a>
-
+        <a href="{% url 'forum' %}?sort={{ selected_sort }}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
         {% for category in categories %}
-            <a href="{% url 'forum' %}?category={{ category }}&sort={{ selected_sort }}"
-               class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                {{ category }}
-            </a>
+            <a href="{% url 'forum' %}?category={{ category }}&sort={{ selected_sort }}" class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ category }}</a>
         {% endfor %}
     </div>
 
     <div class="mb-3">
         <strong>Sort by:</strong>
-
-        <a href="?sort=newest{% if selected_category %}&category={{ selected_category }}{% endif %}"
-           class="btn btn-sm {% if selected_sort == 'newest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-            Newest
-        </a>
-
-        <a href="?sort=oldest{% if selected_category %}&category={{ selected_category }}{% endif %}"
-           class="btn btn-sm {% if selected_sort == 'oldest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-            Oldest
-        </a>
-
-        <a href="?sort=highest{% if selected_category %}&category={{ selected_category }}{% endif %}"
-           class="btn btn-sm {% if selected_sort == 'highest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-            Highest Rating
-        </a>
+        <a href="?sort=newest{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm {% if selected_sort == 'newest' %}btn-primary{% else %}btn-outline-primary{% endif %}">Newest</a>
+        <a href="?sort=oldest{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm {% if selected_sort == 'oldest' %}btn-primary{% else %}btn-outline-primary{% endif %}">Oldest</a>
+        <a href="?sort=highest{% if selected_category %}&category={{ selected_category }}{% endif %}" class="btn btn-sm {% if selected_sort == 'highest' %}btn-primary{% else %}btn-outline-primary{% endif %}">Highest Rating</a>
     </div>
 
     {% for post in posts %}
@@ -97,9 +69,7 @@ Parent Community
                     {% endif %}
                 </div>
 
-                <span class="badge bg-info text-dark mb-2">
-                    {{ post.category }}
-                </span>
+                <span class="badge bg-info text-dark mb-2">{{ post.category }}</span>
 
                 <h4 class="fw-bold">{{ post.title }}</h4>
                 <p>{{ post.content }}</p>
@@ -125,9 +95,7 @@ Parent Community
                 {% if user == post.author %}
                     <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm mt-2">
-                            Delete
-                        </button>
+                        <button type="submit" class="btn btn-danger btn-sm mt-2">Delete</button>
                     </form>
                 {% endif %}
 
@@ -138,9 +106,7 @@ Parent Community
                 {% if post.comments.all %}
                     {% for comment in post.comments.all %}
                         <div class="border rounded p-2 mb-2 bg-dark text-white">
-
                             <p class="mb-1">{{ comment.content }}</p>
-
                             <small class="text-light">
                                 {% if comment.edited_at %}
                                     Edited by
@@ -156,14 +122,11 @@ Parent Community
                                     on {{ comment.created_at }}
                                 {% endif %}
                             </small>
-
                             {% if user == comment.author %}
                                 <br>
                                 <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm mt-1">
-                                        Delete
-                                    </button>
+                                    <button type="submit" class="btn btn-danger btn-sm mt-1">Delete</button>
                                 </form>
                             {% endif %}
                         </div>
@@ -173,10 +136,15 @@ Parent Community
                 {% endif %}
 
                 {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'add_comment' post.id %}" class="mt-2">
+                    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="toggleCommentForm({{ post.id }})">
+                        Add Comment
+                    </button>
+
+                    <form method="post" action="{% url 'add_comment' post.id %}" class="mt-2" id="comment-form-{{ post.id }}" style="display:none;">
                         {% csrf_token %}
                         <textarea name="content" class="form-control mb-2" rows="2" placeholder="Write a comment..." required></textarea>
-                        <button type="submit" class="btn btn-secondary btn-sm">Add Comment</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Post</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleCommentForm({{ post.id }})">Cancel</button>
                     </form>
                 {% endif %}
 
@@ -187,4 +155,16 @@ Parent Community
     {% endfor %}
 
 </div>
+
+<script>
+function toggleCommentForm(postId) {
+    const form = document.getElementById("comment-form-" + postId);
+    if (form.style.display === "none") {
+        form.style.display = "block";
+    } else {
+        form.style.display = "none";
+    }
+}
+</script>
+
 {% endblock %}
