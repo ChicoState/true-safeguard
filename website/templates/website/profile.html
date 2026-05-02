@@ -61,12 +61,28 @@
 
     <h3>{{ profile_user.username }}'s Posts</h3>
 
+    <div class="mb-3">
+        <strong>Filter by category:</strong>
+
+        <a href="{% url 'profile_detail' profile_user.username %}"
+           class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            All
+        </a>
+
+        {% for category in categories %}
+            <a href="{% url 'profile_detail' profile_user.username %}?category={{ category }}"
+               class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ category }}
+            </a>
+        {% endfor %}
+    </div>
+
     {% for post in posts %}
         <div class="card mb-3 bg-dark text-white border-light">
             <div class="card-body">
                 <span class="badge bg-info text-dark mb-2">{{ post.category }}</span>
 
-                <h5>{{ post.title }}</h5>
+                <h5 class="fw-bold">{{ post.title }}</h5>
                 <p>{{ post.content }}</p>
 
                 <small class="text-light">
@@ -89,7 +105,7 @@
             </div>
         </div>
     {% empty %}
-        <p class="text-white">No posts yet.</p>
+        <p class="text-white">No posts found.</p>
     {% endfor %}
 
 </div>
