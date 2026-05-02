@@ -7,8 +7,12 @@ Parent Community
 {% block content %}
 <div class="container mt-4 text-white">
 
-    <h1>Parent Community</h1>
-    <p>Discuss online safety, share advice, and ask questions with other parents.</p>
+    <div class="mb-4">
+        <h1 class="fw-bold display-5 mb-1">Parent Community</h1>
+        <p class="text-white fw-bold">
+            Discuss online safety, share advice, and ask questions with other parents.
+        </p>
+    </div>
 
     <hr class="border-light">
 
@@ -127,9 +131,7 @@ Parent Community
 
                                 {% if user == comment.author %}
                                     <br>
-                                    <button type="button" class="btn btn-warning btn-sm mt-1" onclick="showCommentEditForm({{ comment.id }})">
-                                        Edit
-                                    </button>
+                                    <button type="button" class="btn btn-warning btn-sm mt-1" onclick="showCommentEditForm({{ comment.id }})">Edit</button>
 
                                     <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
                                         {% csrf_token %}
@@ -155,9 +157,7 @@ Parent Community
                 {% endif %}
 
                 {% if user.is_authenticated %}
-                    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="toggleCommentForm({{ post.id }})">
-                        Add Comment
-                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="toggleCommentForm({{ post.id }})">Add Comment</button>
 
                     <form method="post" action="{% url 'add_comment' post.id %}" class="mt-2" id="comment-form-{{ post.id }}" style="display:none;">
                         {% csrf_token %}
