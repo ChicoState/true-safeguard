@@ -1,4 +1,4 @@
-/* Use global background — removed background: #0d0d0d */
+/* Use global background */
 body {
     color: #fff;
     font-family: Arial, sans-serif;
@@ -34,6 +34,7 @@ body {
 /* Input fields */
 .auth-field {
     margin-bottom: 18px;
+    position: relative;
 }
 
 .auth-field label {
@@ -43,14 +44,57 @@ body {
     color: #ccc;
 }
 
+/* Inputs (all types) */
 .auth-field input {
     width: 100%;
     padding: 12px;
+    padding-right: 40px; /* space for eye icon */
     border-radius: 6px;
     border: none;
     background: #2a2a2a;
     color: #fff;
     font-size: 15px;
+}
+
+/* FORCE password + text inputs to stay dark */
+.auth-field input[type="password"],
+.auth-field input[type="text"] {
+    background: #2a2a2a !important;
+    color: #fff !important;
+}
+
+/* Fix focus (prevents white flash) */
+.auth-field input:focus,
+.auth-field input[type="password"]:focus,
+.auth-field input[type="text"]:focus {
+    outline: none;
+    background-color: #2a2a2a !important;
+    color: #fff !important;
+    box-shadow: 0 0 0 2px #187ae2;
+}
+
+/* Fix Chrome autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #2a2a2a inset !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+/* Eye button */
+.auth-field button {
+    position: absolute;
+    right: 10px;
+    top: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    padding: 0;
+}
+
+/* Eye hover */
+.auth-field button:hover {
+    color: #fff;
 }
 
 /* Buttons */
