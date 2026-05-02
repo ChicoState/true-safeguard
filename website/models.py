@@ -150,6 +150,19 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.message
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    is_important = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-is_important', '-created_at']
+
+    def __str__(self):
+        return self.message
 
 
 @receiver(post_save, sender=User)

@@ -29,4 +29,7 @@ urlpatterns = [
     path('profile/edit-bio/', views.edit_bio, name='edit_bio'),
 
     path('notifications/', views.notifications, name='notifications'),
+    path('notifications/<int:notification_id>/important/', views.toggle_important_notification, name='toggle_important_notification'),
+    path('notifications/<int:notification_id>/delete/', views.delete_notification, name='delete_notification'),
+    path('notifications/clear/', views.clear_notifications, name='clear_notifications'),
 ]

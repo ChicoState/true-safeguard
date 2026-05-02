@@ -335,3 +335,30 @@ def notifications(request):
     return render(request, "website/notifications.html", {
         "notifications": user_notifications
     })
+
+@login_required
+def toggle_important_notification(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+
+    if request.method == "POST":
+        notification.is_important = not notification.is_important
+        notification.save()
+
+    return redirect("notifications")
+
+
+@login_required
+def delete_notification(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+
+    if request.method == "POST":
+        notification.delete()
+
+    return redirect("notifications")
+
+@login_required
+def clear_notifications(request):
+    if request.method == "POST":
+        Notification.objects.filter(user=request.user, is_important=False).delete()
+        messages.success(request, "Non-important notifications cleared.")
+    return redirect("notifications")
