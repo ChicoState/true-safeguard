@@ -65,6 +65,7 @@ def resources(request):
             ]
         }
     ]
+
     return render(request, 'website/resources.html', {'categories': resource_data})
 
 def register(request):
@@ -101,6 +102,7 @@ def login_view(request):
 
 def forum(request):
     selected_category = request.GET.get("category")
+    selected_sort = request.GET.get("sort", "newest")
     categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
 
     posts = ForumPost.objects.all()
@@ -108,10 +110,19 @@ def forum(request):
     if selected_category in categories:
         posts = posts.filter(category=selected_category)
 
+    if selected_sort == "oldest":
+        posts = posts.order_by("created_at")
+    elif selected_sort == "highest":
+        posts = sorted(posts, key=lambda post: post.vote_score(), reverse=True)
+    else:
+        selected_sort = "newest"
+        posts = posts.order_by("-created_at")
+
     return render(request, 'website/forum.html', {
         'posts': posts,
         'categories': categories,
         'selected_category': selected_category,
+        'selected_sort': selected_sort,
     })
 
 def profile_detail(request, username):
@@ -152,6 +163,7 @@ def follow_user(request, username):
         profile.followers.remove(request.user)
     else:
         profile.followers.add(request.user)
+
         Notification.objects.create(
             user=profile_user,
             message=f"{request.user.username} followed you."
@@ -160,30 +172,17 @@ def follow_user(request, username):
     return redirect("profile_detail", username=username)
 
 @login_required
-def edit_bio(request):
-    profile = get_object_or_404(Profile, user=request.user)
-
-    if request.method == "POST":
-        profile.bio = request.POST.get("bio")
-        profile.save()
-        messages.success(request, "Bio updated.")
-
-    return redirect("profile_detail", username=request.user.username)
-
-@login_required
 def create_post(request):
+    categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
+
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
         category = request.POST.get("category")
 
-        valid_categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
-
-        if category not in valid_categories:
+        if category not in categories:
             messages.error(request, "Please choose a valid category.")
-            return render(request, "website/create_post.html", {
-                "categories": valid_categories
-            })
+            return render(request, "website/create_post.html", {"categories": categories})
 
         post = ForumPost.objects.create(
             author=request.user,
@@ -202,9 +201,7 @@ def create_post(request):
 
         return redirect("forum")
 
-    return render(request, "website/create_post.html", {
-        "categories": ["Games", "Apps", "Trends", "Movies", "Advice"]
-    })
+    return render(request, "website/create_post.html", {"categories": categories})
 
 @login_required
 def delete_post(request, post_id):
@@ -265,15 +262,21 @@ def add_comment(request, post_id):
 @login_required
 def edit_post(request, post_id):
     post = get_object_or_404(ForumPost, id=post_id)
+    categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
 
     if post.author != request.user:
         messages.error(request, "You can only edit your own posts.")
         return redirect("forum")
 
     if request.method == "POST":
+        category = request.POST.get("category")
+
+        if category not in categories:
+            return JsonResponse({"error": "Invalid category."}, status=400)
+
         post.title = request.POST.get("title")
         post.content = request.POST.get("content")
-        post.category = request.POST.get("category")
+        post.category = category
         post.edited_at = timezone.now()
         post.save()
 
@@ -325,13 +328,24 @@ def delete_comment(request, comment_id):
     if request.method == "POST":
         comment.delete()
         messages.success(request, "Comment deleted.")
-        return redirect("forum")
 
     return redirect("forum")
 
 @login_required
+def edit_bio(request):
+    profile = get_object_or_404(Profile, user=request.user)
+
+    if request.method == "POST":
+        profile.bio = request.POST.get("bio")
+        profile.save()
+        messages.success(request, "Bio updated.")
+
+    return redirect("profile_detail", username=request.user.username)
+
+@login_required
 def notifications(request):
     user_notifications = request.user.notifications.all()
+
     return render(request, "website/notifications.html", {
         "notifications": user_notifications
     })
@@ -345,7 +359,6 @@ def toggle_important_notification(request, notification_id):
         notification.save()
 
     return redirect("notifications")
-
 
 @login_required
 def delete_notification(request, notification_id):
@@ -361,4 +374,5 @@ def clear_notifications(request):
     if request.method == "POST":
         Notification.objects.filter(user=request.user, is_important=False).delete()
         messages.success(request, "Non-important notifications cleared.")
+
     return redirect("notifications")

@@ -18,23 +18,48 @@ Parent Community
         <p><a href="{% url 'login' %}">Login</a> to create a post or comment.</p>
     {% endif %}
 
+    <!-- CATEGORY FILTER -->
     <div class="mb-3">
         <strong>Filter by category:</strong>
-        <a href="{% url 'forum' %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+
+        <a href="{% url 'forum' %}?sort={{ selected_sort }}"
+           class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
             All
         </a>
 
         {% for category in categories %}
-            <a href="{% url 'forum' %}?category={{ category }}" class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <a href="{% url 'forum' %}?category={{ category }}&sort={{ selected_sort }}"
+               class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
                 {{ category }}
             </a>
         {% endfor %}
+    </div>
+
+    <!-- SORT FILTER -->
+    <div class="mb-3">
+        <strong>Sort by:</strong>
+
+        <a href="?sort=newest{% if selected_category %}&category={{ selected_category }}{% endif %}"
+           class="btn btn-sm {% if selected_sort == 'newest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Newest
+        </a>
+
+        <a href="?sort=oldest{% if selected_category %}&category={{ selected_category }}{% endif %}"
+           class="btn btn-sm {% if selected_sort == 'oldest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Oldest
+        </a>
+
+        <a href="?sort=highest{% if selected_category %}&category={{ selected_category }}{% endif %}"
+           class="btn btn-sm {% if selected_sort == 'highest' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Highest Rating
+        </a>
     </div>
 
     {% for post in posts %}
         <div class="card mb-3 bg-dark text-white border-light">
             <div class="card-body">
 
+                <!-- VOTING -->
                 <div class="d-flex align-items-center mb-2">
                     {% if user.is_authenticated %}
                         <a href="{% url 'vote_post' post.id 1 %}" class="btn btn-success btn-sm me-1">▲</a>
@@ -51,18 +76,16 @@ Parent Community
                     {% endif %}
                 </div>
 
+                <!-- POST CONTENT -->
                 <div id="post-view-{{ post.id }}">
-                    <span id="post-category-{{ post.id }}" class="badge bg-info text-dark mb-2">
+                    <span class="badge bg-info text-dark mb-2">
                         {{ post.category }}
                     </span>
 
-                    <h4 id="post-title-{{ post.id }}" class="fw-bold">
-                        {{ post.title }}
-                    </h4>
+                    <h4 class="fw-bold">{{ post.title }}</h4>
+                    <p>{{ post.content }}</p>
 
-                    <p id="post-content-{{ post.id }}">{{ post.content }}</p>
-
-                    <small id="post-meta-{{ post.id }}" class="text-light">
+                    <small class="text-light">
                         {% if post.edited_at %}
                             Edited by
                         {% else %}
@@ -96,96 +119,42 @@ Parent Community
                     {% endif %}
                 </div>
 
-                {% if user == post.author %}
-                    <div id="post-edit-{{ post.id }}" style="display:none;">
-                        <form onsubmit="savePost(event, {{ post.id }}, '{% url 'edit_post' post.id %}')">
-                            {% csrf_token %}
-
-                            <input type="text"
-                                   id="post-title-input-{{ post.id }}"
-                                   name="title"
-                                   class="form-control mb-2"
-                                   value="{{ post.title }}"
-                                   required>
-
-                            <select id="post-category-input-{{ post.id }}"
-                                    name="category"
-                                    class="form-control mb-2"
-                                    required>
-                                <option value="Games" {% if post.category == "Games" %}selected{% endif %}>Games</option>
-                                <option value="Apps" {% if post.category == "Apps" %}selected{% endif %}>Apps</option>
-                                <option value="Trends" {% if post.category == "Trends" %}selected{% endif %}>Trends</option>
-                                <option value="Movies" {% if post.category == "Movies" %}selected{% endif %}>Movies</option>
-                                <option value="Advice" {% if post.category == "Advice" %}selected{% endif %}>Advice</option>
-                            </select>
-
-                            <textarea id="post-content-input-{{ post.id }}"
-                                      name="content"
-                                      class="form-control mb-2"
-                                      rows="3"
-                                      required>{{ post.content }}</textarea>
-
-                            <button type="submit" class="btn btn-success btn-sm">Save</button>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="cancelPostEdit({{ post.id }})">Cancel</button>
-                        </form>
-                    </div>
-                {% endif %}
-
                 <hr class="border-light">
 
+                <!-- COMMENTS -->
                 <h6>Comments</h6>
 
                 {% if post.comments.all %}
                     {% for comment in post.comments.all %}
-                        <div id="comment-{{ comment.id }}" class="border rounded p-2 mb-2 bg-dark text-white">
+                        <div class="border rounded p-2 mb-2 bg-dark text-white">
 
-                            <div id="comment-view-{{ comment.id }}">
-                                <p id="comment-content-{{ comment.id }}" class="mb-1">{{ comment.content }}</p>
+                            <p class="mb-1">{{ comment.content }}</p>
 
-                                <small id="comment-meta-{{ comment.id }}" class="text-light">
-                                    {% if comment.edited_at %}
-                                        Edited by
-                                    {% else %}
-                                        Posted by
-                                    {% endif %}
-                                    <a href="{% url 'profile_detail' comment.author.username %}">
-                                        {{ comment.author.username }}
-                                    </a>
-                                    {% if comment.edited_at %}
-                                        on {{ comment.edited_at }}
-                                    {% else %}
-                                        on {{ comment.created_at }}
-                                    {% endif %}
-                                </small>
-
-                                {% if user == comment.author %}
-                                    <br>
-                                    <button type="button"
-                                            class="btn btn-warning btn-sm mt-1"
-                                            onclick="showEditForm({{ comment.id }})">
-                                        Edit
-                                    </button>
-
-                                    <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm mt-1">
-                                            Delete
-                                        </button>
-                                    </form>
+                            <small class="text-light">
+                                {% if comment.edited_at %}
+                                    Edited by
+                                {% else %}
+                                    Posted by
                                 {% endif %}
-                            </div>
+                                <a href="{% url 'profile_detail' comment.author.username %}">
+                                    {{ comment.author.username }}
+                                </a>
+                                {% if comment.edited_at %}
+                                    on {{ comment.edited_at }}
+                                {% else %}
+                                    on {{ comment.created_at }}
+                                {% endif %}
+                            </small>
 
                             {% if user == comment.author %}
-                                <div id="comment-edit-{{ comment.id }}" style="display:none;">
-                                    <form onsubmit="saveComment(event, {{ comment.id }}, '{% url 'edit_comment' comment.id %}')">
-                                        {% csrf_token %}
-                                        <textarea id="comment-textarea-{{ comment.id }}" name="content" class="form-control mb-2" rows="2" required>{{ comment.content }}</textarea>
-                                        <button type="submit" class="btn btn-success btn-sm">Save</button>
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit({{ comment.id }})">Cancel</button>
-                                    </form>
-                                </div>
+                                <br>
+                                <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm mt-1">
+                                        Delete
+                                    </button>
+                                </form>
                             {% endif %}
-
                         </div>
                     {% endfor %}
                 {% else %}
@@ -207,80 +176,4 @@ Parent Community
     {% endfor %}
 
 </div>
-
-<script>
-function showEditForm(commentId) {
-    document.getElementById("comment-view-" + commentId).style.display = "none";
-    document.getElementById("comment-edit-" + commentId).style.display = "block";
-}
-
-function cancelEdit(commentId) {
-    document.getElementById("comment-edit-" + commentId).style.display = "none";
-    document.getElementById("comment-view-" + commentId).style.display = "block";
-}
-
-function saveComment(event, commentId, url) {
-    event.preventDefault();
-
-    const textarea = document.getElementById("comment-textarea-" + commentId);
-    const content = textarea.value;
-    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
-
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrfToken,
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "content=" + encodeURIComponent(content)
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("comment-content-" + commentId).innerText = data.content;
-        document.getElementById("comment-meta-" + commentId).innerHTML = data.meta;
-        cancelEdit(commentId);
-    });
-}
-
-function showPostEditForm(postId) {
-    document.getElementById("post-view-" + postId).style.display = "none";
-    document.getElementById("post-edit-" + postId).style.display = "block";
-}
-
-function cancelPostEdit(postId) {
-    document.getElementById("post-edit-" + postId).style.display = "none";
-    document.getElementById("post-view-" + postId).style.display = "block";
-}
-
-function savePost(event, postId, url) {
-    event.preventDefault();
-
-    const titleInput = document.getElementById("post-title-input-" + postId);
-    const categoryInput = document.getElementById("post-category-input-" + postId);
-    const contentInput = document.getElementById("post-content-input-" + postId);
-    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
-
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrfToken,
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "title=" + encodeURIComponent(titleInput.value) +
-              "&category=" + encodeURIComponent(categoryInput.value) +
-              "&content=" + encodeURIComponent(contentInput.value)
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("post-title-" + postId).innerText = data.title;
-        document.getElementById("post-content-" + postId).innerText = data.content;
-        document.getElementById("post-category-" + postId).innerText = data.category;
-        document.getElementById("post-meta-" + postId).innerHTML = data.meta;
-        cancelPostEdit(postId);
-    });
-}
-</script>
-
 {% endblock %}
