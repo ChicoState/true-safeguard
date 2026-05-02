@@ -23,9 +23,10 @@ urlpatterns = [
     path('forum/comment/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
     path("comment/<int:comment_id>/delete/", views.delete_comment, name="delete_comment"),
 
+    path('profile/edit-bio/', views.edit_bio, name='edit_bio'),
     path('profile/<str:username>/', views.profile_detail, name='profile_detail'),
     path('profile/<str:username>/follow/', views.follow_user, name='follow_user'),
+    path('profile/edit-bio/', views.edit_bio, name='edit_bio'),
 
     path('notifications/', views.notifications, name='notifications'),
 ]
-
