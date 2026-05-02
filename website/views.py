@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import JsonResponse
+from django.db.models import Q
 from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notification
 
 def home(request):
@@ -25,47 +26,10 @@ def resources(request):
     resource_data = [
         {
             'category_name': 'Recognizing Screen Fatigue & Overstimulation',
-            'category_info': 'Parents often miss the early signs of screen fatigue because they look like regular tiredness. Watch for the "Tired but Wired" state—where a child is clearly exhausted but physically unable to calm down. Ask yourself: Is my child often angry or irritable? Does it seem like they are always having a hard time? Excessive screen time could be the culprit.',
-            'links': [
-                {
-                    'title': 'The "Physical 5" Checklist',
-                    'url': 'https://www.healthychildren.org/English/health-issues/conditions/eyes/Pages/What-Too-Much-Screen-Time-Does-to-Your-Childs-Eyes.aspx',
-                    'desc': 'Check for: 1. Excessive eye rubbing, 2. Dilated pupils, 3. Rapid blinking, 4. Head tilting/squinting, and 5. Unusual clumsiness after playing.'
-                },
-                {
-                    'title': 'Behavioral Red Flags',
-                    'url': 'https://socalmentalwellness.com/child-counseling/too-much-screen-time/',
-                    'desc': 'Look for "Screen Crashes": intense irritability, aggression, or a "glazed over" look where the child doesn\'t respond to their name.'
-                },
-            ]
-        },
-        {
-            'category_name': 'Detecting AI & Synthetic Media',
-            'category_info': 'In an era of deepfakes, children must be taught to verify the authenticity of what they see. We recommend the "SIFT" method: Stop, Investigate the source, Find better coverage, and Trace claims back to the original context.',
-            'links': [
-                {'title': 'Spotting Deepfakes', 'url': 'https://www.mit.edu', 'desc': 'Key visual markers to identify AI-generated faces and voices.'},
-                {'title': 'Fact-Checking for Kids', 'url': 'https://www.commonsensemedia.org', 'desc': 'Tools to help children distinguish between real footage and synthetic media.'},
-            ]
-        },
-        {
-            'category_name': 'Evidence-Based Alternatives',
-            'category_info': 'Replacing screen time is most effective when the alternative provides similar cognitive engagement. Low-dopamine activities allow the brain to reset and improve sustained attention spans.',
-            'links': [
-                {'title': 'Open-Ended Play Resources', 'url': 'https://www.naeyc.org', 'desc': 'Research on how tactile play builds executive function better than apps.'},
-                {'title': 'Screen-Free Week Toolkits', 'url': 'https://www.screenfree.org', 'desc': 'Practical planners for transitioning families to a lower-tech lifestyle.'},
-            ]
-        },
-        {
-            'category_name': 'Local Spotlight: Chico Area Recreation & Park District (CARD)',
-            'category_info': 'For those in the Chico area, CARD provides vital screen-free outlets. From the Chico Creek Nature Center to specialized youth clubs, these programs focus on physical health and outdoor skill-building.',
-            'links': [
-                {'title': 'CARD Official Website', 'url': 'https://www.chicorec.gov/', 'desc': 'Explore the full catalog of sports, martial arts, and community classes.'},
-                {'title': 'Park Explorers Survival Club', 'url': 'https://www.chicorec.gov/park-explorers-survival-club', 'desc': 'Outdoor adventures uncovering hidden trails and learning wilderness survival skills.'},
-                {'title': 'Chico Creek Nature Center', 'url': 'https://www.chicorec.gov/chico-creek-nature-center', 'desc': 'Nature ABCs, night hikes, and spring/summer camps located in Bidwell Park.'},
-            ]
+            'category_info': 'Parents often miss the early signs of screen fatigue because they look like regular tiredness.',
+            'links': []
         }
     ]
-
     return render(request, 'website/resources.html', {'categories': resource_data})
 
 def register(request):
@@ -103,12 +67,20 @@ def login_view(request):
 def forum(request):
     selected_category = request.GET.get("category")
     selected_sort = request.GET.get("sort", "newest")
+    search_query = request.GET.get("q", "")
     categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
 
     posts = ForumPost.objects.all()
 
     if selected_category in categories:
         posts = posts.filter(category=selected_category)
+
+    if search_query:
+        posts = posts.filter(
+            Q(title__icontains=search_query) |
+            Q(content__icontains=search_query) |
+            Q(author__username__icontains=search_query)
+        )
 
     if selected_sort == "oldest":
         posts = posts.order_by("created_at")
@@ -123,6 +95,7 @@ def forum(request):
         'categories': categories,
         'selected_category': selected_category,
         'selected_sort': selected_sort,
+        'search_query': search_query,
     })
 
 def profile_detail(request, username):
@@ -163,7 +136,6 @@ def follow_user(request, username):
         profile.followers.remove(request.user)
     else:
         profile.followers.add(request.user)
-
         Notification.objects.create(
             user=profile_user,
             message=f"{request.user.username} followed you."
@@ -225,9 +197,6 @@ def vote_post(request, post_id, vote_value):
     if vote_value == 0:
         vote_value = -1
 
-    if vote_value not in [1, -1]:
-        return redirect("forum")
-
     vote, created = PostVote.objects.get_or_create(
         user=request.user,
         post=post,
@@ -262,21 +231,14 @@ def add_comment(request, post_id):
 @login_required
 def edit_post(request, post_id):
     post = get_object_or_404(ForumPost, id=post_id)
-    categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
 
     if post.author != request.user:
-        messages.error(request, "You can only edit your own posts.")
         return redirect("forum")
 
     if request.method == "POST":
-        category = request.POST.get("category")
-
-        if category not in categories:
-            return JsonResponse({"error": "Invalid category."}, status=400)
-
         post.title = request.POST.get("title")
         post.content = request.POST.get("content")
-        post.category = category
+        post.category = request.POST.get("category")
         post.edited_at = timezone.now()
         post.save()
 
@@ -285,10 +247,9 @@ def edit_post(request, post_id):
                 "title": post.title,
                 "content": post.content,
                 "category": post.category,
-                "meta": f'Edited by <a href="/profile/{post.author.username}/">{post.author.username}</a> on {post.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
+                "meta": f'Edited by <a href="/profile/{post.author.username}/">{post.author.username}</a> on {post.edited_at}'
             })
 
-        messages.success(request, "Post updated.")
         return redirect("forum")
 
     return render(request, "website/edit_post.html", {"post": post})
@@ -298,7 +259,6 @@ def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
     if comment.author != request.user:
-        messages.error(request, "You can only edit your own comments.")
         return redirect("forum")
 
     if request.method == "POST":
@@ -309,10 +269,9 @@ def edit_comment(request, comment_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({
                 "content": comment.content,
-                "meta": f'Edited by <a href="/profile/{comment.author.username}/">{comment.author.username}</a> on {comment.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
+                "meta": f'Edited by <a href="/profile/{comment.author.username}/">{comment.author.username}</a> on {comment.edited_at}'
             })
 
-        messages.success(request, "Comment updated.")
         return redirect("forum")
 
     return render(request, "website/edit_comment.html", {"comment": comment})
@@ -322,12 +281,10 @@ def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
     if comment.author != request.user:
-        messages.error(request, "You can only delete your own comments.")
         return redirect("forum")
 
     if request.method == "POST":
         comment.delete()
-        messages.success(request, "Comment deleted.")
 
     return redirect("forum")
 
@@ -338,16 +295,13 @@ def edit_bio(request):
     if request.method == "POST":
         profile.bio = request.POST.get("bio")
         profile.save()
-        messages.success(request, "Bio updated.")
 
     return redirect("profile_detail", username=request.user.username)
 
 @login_required
 def notifications(request):
-    user_notifications = request.user.notifications.all()
-
     return render(request, "website/notifications.html", {
-        "notifications": user_notifications
+        "notifications": request.user.notifications.all()
     })
 
 @login_required
@@ -373,6 +327,5 @@ def delete_notification(request, notification_id):
 def clear_notifications(request):
     if request.method == "POST":
         Notification.objects.filter(user=request.user, is_important=False).delete()
-        messages.success(request, "Non-important notifications cleared.")
 
     return redirect("notifications")
