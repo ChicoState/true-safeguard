@@ -1,15 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notification
 
 def home(request):
-
     return render(request, 'website/home.html')
 
 def apps(request):
@@ -23,22 +21,22 @@ def blacklist(request):
     return render(request, 'website/blacklist.html', {'blacklist_items': blacklist_items})
 
 def resources(request):
-    resource_data = resource_data = [
+    resource_data = [
         {
             'category_name': 'Recognizing Screen Fatigue & Overstimulation',
             'category_info': 'Parents often miss the early signs of screen fatigue because they look like regular tiredness. Watch for the "Tired but Wired" state—where a child is clearly exhausted but physically unable to calm down. Ask yourself: Is my child often angry or irritable? Does it seem like they are always having a hard time? Excessive screen time could be the culprit.',
             'links': [
-            {
-                'title': 'The "Physical 5" Checklist', 
-                'url': 'https://www.healthychildren.org/English/health-issues/conditions/eyes/Pages/What-Too-Much-Screen-Time-Does-to-Your-Childs-Eyes.aspx', 
-                'desc': 'Check for: 1. Excessive eye rubbing, 2. Dilated pupils, 3. Rapid blinking, 4. Head tilting/squinting, and 5. Unusual clumsiness after playing.'
-            },
-            {
-                'title': 'Behavioral Red Flags', 
-                'url': 'https://socalmentalwellness.com/child-counseling/too-much-screen-time/', 
-                'desc': 'Look for "Screen Crashes": intense irritability, aggression, or a "glazed over" look where the child doesn\'t respond to their name.'
-            },
-    ]
+                {
+                    'title': 'The "Physical 5" Checklist',
+                    'url': 'https://www.healthychildren.org/English/health-issues/conditions/eyes/Pages/What-Too-Much-Screen-Time-Does-to-Your-Childs-Eyes.aspx',
+                    'desc': 'Check for: 1. Excessive eye rubbing, 2. Dilated pupils, 3. Rapid blinking, 4. Head tilting/squinting, and 5. Unusual clumsiness after playing.'
+                },
+                {
+                    'title': 'Behavioral Red Flags',
+                    'url': 'https://socalmentalwellness.com/child-counseling/too-much-screen-time/',
+                    'desc': 'Look for "Screen Crashes": intense irritability, aggression, or a "glazed over" look where the child doesn\'t respond to their name.'
+                },
+            ]
         },
         {
             'category_name': 'Detecting AI & Synthetic Media',
@@ -59,14 +57,13 @@ def resources(request):
         {
             'category_name': 'Local Spotlight: Chico Area Recreation & Park District (CARD)',
             'category_info': 'For those in the Chico area, CARD provides vital screen-free outlets. From the Chico Creek Nature Center to specialized youth clubs, these programs focus on physical health and outdoor skill-building.',
-        'links': [
-            {'title': 'CARD Official Website', 'url': 'https://www.chicorec.gov/', 'desc': 'Explore the full catalog of sports, martial arts, and community classes.'},
-            {'title': 'Park Explorers Survival Club', 'url': 'https://www.chicorec.gov/park-explorers-survival-club', 'desc': 'Outdoor adventures uncovering hidden trails and learning wilderness survival skills.'},
-            {'title': 'Chico Creek Nature Center', 'url': 'https://www.chicorec.gov/chico-creek-nature-center', 'desc': 'Nature ABCs, night hikes, and spring/summer camps located in Bidwell Park.'},
-        ]
+            'links': [
+                {'title': 'CARD Official Website', 'url': 'https://www.chicorec.gov/', 'desc': 'Explore the full catalog of sports, martial arts, and community classes.'},
+                {'title': 'Park Explorers Survival Club', 'url': 'https://www.chicorec.gov/park-explorers-survival-club', 'desc': 'Outdoor adventures uncovering hidden trails and learning wilderness survival skills.'},
+                {'title': 'Chico Creek Nature Center', 'url': 'https://www.chicorec.gov/chico-creek-nature-center', 'desc': 'Nature ABCs, night hikes, and spring/summer camps located in Bidwell Park.'},
+            ]
         }
     ]
-
     return render(request, 'website/resources.html', {'categories': resource_data})
 
 def register(request):
@@ -75,17 +72,14 @@ def register(request):
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
-        # 1. Passwords must match
         if password1 != password2:
             messages.error(request, "Passwords do not match.")
             return render(request, "website/register.html")
 
-        # 2. Username must be unique
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken.")
             return render(request, "website/register.html")
 
-        # 3. Run Django's password validators
         try:
             validate_password(password1)
         except ValidationError as e:
@@ -93,7 +87,6 @@ def register(request):
                 messages.error(request, error)
             return render(request, "website/register.html")
 
-        # 4. Create the user
         user = User.objects.create_user(username=username, password=password1)
         user.save()
 
@@ -125,7 +118,6 @@ def profile_detail(request, username):
         "is_following": is_following,
     })
 
-
 @login_required
 def follow_user(request, username):
     profile_user = get_object_or_404(User, username=username)
@@ -139,7 +131,6 @@ def follow_user(request, username):
         profile.followers.remove(request.user)
     else:
         profile.followers.add(request.user)
-
         Notification.objects.create(
             user=profile_user,
             message=f"{request.user.username} followed you."
@@ -190,7 +181,6 @@ def delete_post(request, post_id):
 def vote_post(request, post_id, vote_value):
     post = get_object_or_404(ForumPost, id=post_id)
 
-    # Convert 0 → -1 for downvote
     if vote_value == 0:
         vote_value = -1
 
@@ -205,9 +195,9 @@ def vote_post(request, post_id, vote_value):
 
     if not created:
         if vote.value == vote_value:
-            vote.delete()  # remove vote if clicking same again
+            vote.delete()
         else:
-            vote.value = vote_value  # switch vote
+            vote.value = vote_value
             vote.save()
 
     return redirect("forum")
@@ -239,18 +229,21 @@ def edit_post(request, post_id):
     if request.method == "POST":
         post.title = request.POST.get("title")
         post.content = request.POST.get("content")
+        post.edited_at = timezone.now()
         post.save()
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             from django.http import JsonResponse
-
             return JsonResponse({
                 "title": post.title,
-                "content": post.content
+                "content": post.content,
+                "meta": f'Edited by <a href="/profile/{post.author.username}/">{post.author.username}</a> on {post.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
             })
 
         messages.success(request, "Post updated.")
         return redirect("forum")
+
+    return render(request, "website/edit_post.html", {"post": post})
 
 @login_required
 def edit_comment(request, comment_id):
@@ -267,7 +260,6 @@ def edit_comment(request, comment_id):
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             from django.http import JsonResponse
-
             return JsonResponse({
                 "content": comment.content,
                 "meta": f'Edited by <a href="/profile/{comment.author.username}/">{comment.author.username}</a> on {comment.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
@@ -279,7 +271,6 @@ def edit_comment(request, comment_id):
 @login_required
 def notifications(request):
     user_notifications = request.user.notifications.all()
-
     return render(request, "website/notifications.html", {
         "notifications": user_notifications
     })
