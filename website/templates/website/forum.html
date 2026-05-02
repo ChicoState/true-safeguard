@@ -18,6 +18,19 @@ Parent Community
         <p><a href="{% url 'login' %}">Login</a> to create a post or comment.</p>
     {% endif %}
 
+    <div class="mb-3">
+        <strong>Filter by category:</strong>
+        <a href="{% url 'forum' %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            All
+        </a>
+
+        {% for category in categories %}
+            <a href="{% url 'forum' %}?category={{ category }}" class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ category }}
+            </a>
+        {% endfor %}
+    </div>
+
     {% for post in posts %}
         <div class="card mb-3">
             <div class="card-body">
@@ -35,15 +48,27 @@ Parent Community
                 </div>
 
                 <div id="post-view-{{ post.id }}">
+                    <span id="post-category-{{ post.id }}" class="badge bg-info text-dark mb-2">
+                        {{ post.category }}
+                    </span>
+
                     <h4 id="post-title-{{ post.id }}">{{ post.title }}</h4>
                     <p id="post-content-{{ post.id }}">{{ post.content }}</p>
 
-                    <small class="text-muted">
-                        Posted by 
+                    <small id="post-meta-{{ post.id }}" class="text-muted">
+                        {% if post.edited_at %}
+                            Edited by
+                        {% else %}
+                            Posted by
+                        {% endif %}
                         <a href="{% url 'profile_detail' post.author.username %}">
                             {{ post.author.username }}
                         </a>
-                        on {{ post.created_at }}
+                        {% if post.edited_at %}
+                            on {{ post.edited_at }}
+                        {% else %}
+                            on {{ post.created_at }}
+                        {% endif %}
                     </small>
 
                     <br>
@@ -68,12 +93,24 @@ Parent Community
                     <div id="post-edit-{{ post.id }}" style="display:none;">
                         <form onsubmit="savePost(event, {{ post.id }}, '{% url 'edit_post' post.id %}')">
                             {% csrf_token %}
+
                             <input type="text"
                                    id="post-title-input-{{ post.id }}"
                                    name="title"
                                    class="form-control mb-2"
                                    value="{{ post.title }}"
                                    required>
+
+                            <select id="post-category-input-{{ post.id }}"
+                                    name="category"
+                                    class="form-control mb-2"
+                                    required>
+                                <option value="Games" {% if post.category == "Games" %}selected{% endif %}>Games</option>
+                                <option value="Apps" {% if post.category == "Apps" %}selected{% endif %}>Apps</option>
+                                <option value="Trends" {% if post.category == "Trends" %}selected{% endif %}>Trends</option>
+                                <option value="Movies" {% if post.category == "Movies" %}selected{% endif %}>Movies</option>
+                                <option value="Advice" {% if post.category == "Advice" %}selected{% endif %}>Advice</option>
+                            </select>
 
                             <textarea id="post-content-input-{{ post.id }}"
                                       name="content"
@@ -121,6 +158,13 @@ Parent Community
                                             onclick="showEditForm({{ comment.id }})">
                                         Edit
                                     </button>
+
+                                    <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm mt-1">
+                                            Delete
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
 
@@ -152,7 +196,7 @@ Parent Community
             </div>
         </div>
     {% empty %}
-        <p>No posts yet</p>
+        <p>No posts found.</p>
     {% endfor %}
 
 </div>
@@ -206,6 +250,7 @@ function savePost(event, postId, url) {
     event.preventDefault();
 
     const titleInput = document.getElementById("post-title-input-" + postId);
+    const categoryInput = document.getElementById("post-category-input-" + postId);
     const contentInput = document.getElementById("post-content-input-" + postId);
     const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
 
@@ -217,12 +262,15 @@ function savePost(event, postId, url) {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: "title=" + encodeURIComponent(titleInput.value) +
+              "&category=" + encodeURIComponent(categoryInput.value) +
               "&content=" + encodeURIComponent(contentInput.value)
     })
     .then(response => response.json())
     .then(data => {
         document.getElementById("post-title-" + postId).innerText = data.title;
         document.getElementById("post-content-" + postId).innerText = data.content;
+        document.getElementById("post-category-" + postId).innerText = data.category;
+        document.getElementById("post-meta-" + postId).innerHTML = data.meta;
         cancelPostEdit(postId);
     });
 }

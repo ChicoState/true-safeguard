@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.http import JsonResponse
 from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notification
 
 def home(request):
@@ -99,8 +100,19 @@ def login_view(request):
     return render(request, "website/login.html")
 
 def forum(request):
+    selected_category = request.GET.get("category")
+    categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
+
     posts = ForumPost.objects.all()
-    return render(request, 'website/forum.html', {'posts': posts})
+
+    if selected_category in categories:
+        posts = posts.filter(category=selected_category)
+
+    return render(request, 'website/forum.html', {
+        'posts': posts,
+        'categories': categories,
+        'selected_category': selected_category,
+    })
 
 def profile_detail(request, username):
     profile_user = get_object_or_404(User, username=username)
@@ -143,11 +155,21 @@ def create_post(request):
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
+        category = request.POST.get("category")
+
+        valid_categories = ["Games", "Apps", "Trends", "Movies", "Advice"]
+
+        if category not in valid_categories:
+            messages.error(request, "Please choose a valid category.")
+            return render(request, "website/create_post.html", {
+                "categories": valid_categories
+            })
 
         post = ForumPost.objects.create(
             author=request.user,
             title=title,
-            content=content
+            content=content,
+            category=category
         )
 
         profile = get_object_or_404(Profile, user=request.user)
@@ -160,7 +182,9 @@ def create_post(request):
 
         return redirect("forum")
 
-    return render(request, "website/create_post.html")
+    return render(request, "website/create_post.html", {
+        "categories": ["Games", "Apps", "Trends", "Movies", "Advice"]
+    })
 
 @login_required
 def delete_post(request, post_id):
@@ -229,14 +253,15 @@ def edit_post(request, post_id):
     if request.method == "POST":
         post.title = request.POST.get("title")
         post.content = request.POST.get("content")
+        post.category = request.POST.get("category")
         post.edited_at = timezone.now()
         post.save()
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            from django.http import JsonResponse
             return JsonResponse({
                 "title": post.title,
                 "content": post.content,
+                "category": post.category,
                 "meta": f'Edited by <a href="/profile/{post.author.username}/">{post.author.username}</a> on {post.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
             })
 
@@ -259,7 +284,6 @@ def edit_comment(request, comment_id):
         comment.save()
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            from django.http import JsonResponse
             return JsonResponse({
                 "content": comment.content,
                 "meta": f'Edited by <a href="/profile/{comment.author.username}/">{comment.author.username}</a> on {comment.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
@@ -267,6 +291,23 @@ def edit_comment(request, comment_id):
 
         messages.success(request, "Comment updated.")
         return redirect("forum")
+
+    return render(request, "website/edit_comment.html", {"comment": comment})
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if comment.author != request.user:
+        messages.error(request, "You can only delete your own comments.")
+        return redirect("forum")
+
+    if request.method == "POST":
+        comment.delete()
+        messages.success(request, "Comment deleted.")
+        return redirect("forum")
+
+    return redirect("forum")
 
 @login_required
 def notifications(request):

@@ -5,11 +5,20 @@
 
 <form method="post">
     {% csrf_token %}
-    
+
     <input type="text" name="title" placeholder="Title" required><br><br>
-    
+
+    <select name="category" required>
+        <option value="">Select a category</option>
+        <option value="Games">Games</option>
+        <option value="Apps">Apps</option>
+        <option value="Trends">Trends</option>
+        <option value="Movies">Movies</option>
+        <option value="Advice">Advice</option>
+    </select><br><br>
+
     <textarea name="content" placeholder="Write your post..." required></textarea><br><br>
-    
+
     <button type="submit">Post</button>
 </form>
 
