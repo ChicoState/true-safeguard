@@ -34,30 +34,57 @@ Parent Community
                     {% endif %}
                 </div>
 
-                <h4>{{ post.title }}</h4>
-                <p>{{ post.content }}</p>
+                <div id="post-view-{{ post.id }}">
+                    <h4 id="post-title-{{ post.id }}">{{ post.title }}</h4>
+                    <p id="post-content-{{ post.id }}">{{ post.content }}</p>
 
-                <small class="text-muted">
-                    Posted by 
-                    <a href="{% url 'profile_detail' post.author.username %}">
-                        {{ post.author.username }}
-                    </a>
-                    on {{ post.created_at }}
-                </small>
+                    <small class="text-muted">
+                        Posted by 
+                        <a href="{% url 'profile_detail' post.author.username %}">
+                            {{ post.author.username }}
+                        </a>
+                        on {{ post.created_at }}
+                    </small>
 
-                <br>
+                    <br>
+
+                    {% if user == post.author %}
+                        <button type="button"
+                                class="btn btn-warning btn-sm mt-2"
+                                onclick="showPostEditForm({{ post.id }})">
+                            Edit
+                        </button>
+
+                        <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm mt-2">
+                                Delete
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
 
                 {% if user == post.author %}
-                    <a href="{% url 'edit_post' post.id %}" class="btn btn-warning btn-sm mt-2">
-                        Edit
-                    </a>
+                    <div id="post-edit-{{ post.id }}" style="display:none;">
+                        <form onsubmit="savePost(event, {{ post.id }}, '{% url 'edit_post' post.id %}')">
+                            {% csrf_token %}
+                            <input type="text"
+                                   id="post-title-input-{{ post.id }}"
+                                   name="title"
+                                   class="form-control mb-2"
+                                   value="{{ post.title }}"
+                                   required>
 
-                    <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm mt-2">
-                            Delete
-                        </button>
-                    </form>
+                            <textarea id="post-content-input-{{ post.id }}"
+                                      name="content"
+                                      class="form-control mb-2"
+                                      rows="3"
+                                      required>{{ post.content }}</textarea>
+
+                            <button type="submit" class="btn btn-success btn-sm">Save</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="cancelPostEdit({{ post.id }})">Cancel</button>
+                        </form>
+                    </div>
                 {% endif %}
 
                 <hr>
@@ -65,60 +92,51 @@ Parent Community
                 <h6>Comments</h6>
 
                 {% if post.comments.all %}
-                    {% with first_comment=post.comments.all.0 %}
-                        <div class="border rounded p-2 mb-2">
-                            <p class="mb-1">{{ first_comment.content }}</p>
+                    {% for comment in post.comments.all %}
+                        <div id="comment-{{ comment.id }}" class="border rounded p-2 mb-2">
 
-                            <small class="text-muted">
-                                Comment by 
-                                <a href="{% url 'profile_detail' first_comment.author.username %}">
-                                    {{ first_comment.author.username }}
-                                </a>
-                                on {{ first_comment.created_at }}
-                            </small>
+                            <div id="comment-view-{{ comment.id }}">
+                                <p id="comment-content-{{ comment.id }}" class="mb-1">{{ comment.content }}</p>
 
-                            {% if user == first_comment.author %}
-                                <br>
-                                <a href="{% url 'edit_comment' first_comment.id %}" class="btn btn-warning btn-sm mt-1">
-                                    Edit
-                                </a>
-                            {% endif %}
-                        </div>
-                    {% endwith %}
+                                <small id="comment-meta-{{ comment.id }}" class="text-muted">
+                                    {% if comment.edited_at %}
+                                        Edited by
+                                    {% else %}
+                                        Posted by
+                                    {% endif %}
+                                    <a href="{% url 'profile_detail' comment.author.username %}">
+                                        {{ comment.author.username }}
+                                    </a>
+                                    {% if comment.edited_at %}
+                                        on {{ comment.edited_at }}
+                                    {% else %}
+                                        on {{ comment.created_at }}
+                                    {% endif %}
+                                </small>
 
-                    {% if post.comments.all|length > 1 %}
-                        <button class="btn btn-link btn-sm p-0 mb-2"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#comments-{{ post.id }}">
-                            Show more comments
-                        </button>
-
-                        <div class="collapse" id="comments-{{ post.id }}">
-                            {% for comment in post.comments.all %}
-                                {% if not forloop.first %}
-                                    <div class="border rounded p-2 mb-2">
-                                        <p class="mb-1">{{ comment.content }}</p>
-
-                                        <small class="text-muted">
-                                            Comment by 
-                                            <a href="{% url 'profile_detail' comment.author.username %}">
-                                                {{ comment.author.username }}
-                                            </a>
-                                            on {{ comment.created_at }}
-                                        </small>
-
-                                        {% if user == comment.author %}
-                                            <br>
-                                            <a href="{% url 'edit_comment' comment.id %}" class="btn btn-warning btn-sm mt-1">
-                                                Edit
-                                            </a>
-                                        {% endif %}
-                                    </div>
+                                {% if user == comment.author %}
+                                    <br>
+                                    <button type="button"
+                                            class="btn btn-warning btn-sm mt-1"
+                                            onclick="showEditForm({{ comment.id }})">
+                                        Edit
+                                    </button>
                                 {% endif %}
-                            {% endfor %}
+                            </div>
+
+                            {% if user == comment.author %}
+                                <div id="comment-edit-{{ comment.id }}" style="display:none;">
+                                    <form onsubmit="saveComment(event, {{ comment.id }}, '{% url 'edit_comment' comment.id %}')">
+                                        {% csrf_token %}
+                                        <textarea id="comment-textarea-{{ comment.id }}" name="content" class="form-control mb-2" rows="2" required>{{ comment.content }}</textarea>
+                                        <button type="submit" class="btn btn-success btn-sm">Save</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit({{ comment.id }})">Cancel</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+
                         </div>
-                    {% endif %}
+                    {% endfor %}
                 {% else %}
                     <p class="text-muted">No comments yet.</p>
                 {% endif %}
@@ -138,4 +156,76 @@ Parent Community
     {% endfor %}
 
 </div>
+
+<script>
+function showEditForm(commentId) {
+    document.getElementById("comment-view-" + commentId).style.display = "none";
+    document.getElementById("comment-edit-" + commentId).style.display = "block";
+}
+
+function cancelEdit(commentId) {
+    document.getElementById("comment-edit-" + commentId).style.display = "none";
+    document.getElementById("comment-view-" + commentId).style.display = "block";
+}
+
+function saveComment(event, commentId, url) {
+    event.preventDefault();
+
+    const textarea = document.getElementById("comment-textarea-" + commentId);
+    const content = textarea.value;
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "content=" + encodeURIComponent(content)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("comment-content-" + commentId).innerText = data.content;
+        document.getElementById("comment-meta-" + commentId).innerHTML = data.meta;
+        cancelEdit(commentId);
+    });
+}
+
+function showPostEditForm(postId) {
+    document.getElementById("post-view-" + postId).style.display = "none";
+    document.getElementById("post-edit-" + postId).style.display = "block";
+}
+
+function cancelPostEdit(postId) {
+    document.getElementById("post-edit-" + postId).style.display = "none";
+    document.getElementById("post-view-" + postId).style.display = "block";
+}
+
+function savePost(event, postId, url) {
+    event.preventDefault();
+
+    const titleInput = document.getElementById("post-title-input-" + postId);
+    const contentInput = document.getElementById("post-content-input-" + postId);
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "title=" + encodeURIComponent(titleInput.value) +
+              "&content=" + encodeURIComponent(contentInput.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("post-title-" + postId).innerText = data.title;
+        document.getElementById("post-content-" + postId).innerText = data.content;
+        cancelPostEdit(postId);
+    });
+}
+</script>
+
 {% endblock %}

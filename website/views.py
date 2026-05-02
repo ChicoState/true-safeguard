@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notification
 
 def home(request):
@@ -239,10 +240,17 @@ def edit_post(request, post_id):
         post.title = request.POST.get("title")
         post.content = request.POST.get("content")
         post.save()
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            from django.http import JsonResponse
+
+            return JsonResponse({
+                "title": post.title,
+                "content": post.content
+            })
+
         messages.success(request, "Post updated.")
         return redirect("forum")
-
-    return render(request, "website/edit_post.html", {"post": post})
 
 @login_required
 def edit_comment(request, comment_id):
@@ -254,11 +262,19 @@ def edit_comment(request, comment_id):
 
     if request.method == "POST":
         comment.content = request.POST.get("content")
+        comment.edited_at = timezone.now()
         comment.save()
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            from django.http import JsonResponse
+
+            return JsonResponse({
+                "content": comment.content,
+                "meta": f'Edited by <a href="/profile/{comment.author.username}/">{comment.author.username}</a> on {comment.edited_at.strftime("%B %-d, %Y, %-I:%M %p").lower()}'
+            })
+
         messages.success(request, "Comment updated.")
         return redirect("forum")
-
-    return render(request, "website/edit_comment.html", {"comment": comment})
 
 @login_required
 def notifications(request):
