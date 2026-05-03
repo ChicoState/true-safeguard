@@ -217,6 +217,35 @@ function cancelCommentEdit(id) {
     document.getElementById("comment-edit-" + id).style.display = "none";
     document.getElementById("comment-view-" + id).style.display = "block";
 }
+
+function savePost(event, postId, url) {
+    event.preventDefault();
+
+    const titleInput = document.getElementById("post-title-input-" + postId);
+    const categoryInput = document.getElementById("post-category-input-" + postId);
+    const contentInput = document.getElementById("post-content-input-" + postId);
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "title=" + encodeURIComponent(titleInput.value) +
+              "&category=" + encodeURIComponent(categoryInput.value) +
+              "&content=" + encodeURIComponent(contentInput.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("post-title-" + postId).innerText = data.title;
+        document.getElementById("post-content-" + postId).innerText = data.content;
+        document.getElementById("post-category-" + postId).innerText = data.category;
+        document.getElementById("post-meta-" + postId).innerHTML = data.meta;
+        cancelPostEdit(postId);
+    });
+}
 </script>
 
 {% endblock %}
