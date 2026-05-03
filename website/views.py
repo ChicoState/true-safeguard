@@ -356,8 +356,11 @@ def edit_bio(request):
 
 @login_required
 def notifications(request):
+    user_notifications = request.user.notifications.all()
+    user_notifications.update(is_read=True)
+
     return render(request, "website/notifications.html", {
-        "notifications": request.user.notifications.all()
+        "notifications": user_notifications
     })
 
 @login_required
