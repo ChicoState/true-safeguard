@@ -49,3 +49,133 @@ body {
 .create-post-float:hover .create-post-text {
     display: inline;
 }
+
+.delete-post-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.delete-x {
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-x:hover {
+    background: #bb2d3b;
+}
+
+.comment-actions {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+}
+
+/* Delete (X) */
+.delete-x {
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Edit (pencil) */
+.edit-btn {
+    background: #ffc107;
+    border: none;
+    color: black;
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-x:hover {
+    background: #bb2d3b;
+}
+
+.edit-btn:hover {
+    background: #e0a800;
+}
+
+.post-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+}
+
+/* Reuse same styles */
+.delete-x {
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn {
+    background: #ffc107;
+    border: none;
+    color: black;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-x:hover {
+    background: #bb2d3b;
+}
+
+.edit-btn:hover {
+    background: #e0a800;
+}
+
+.post-actions,
+.comment-actions {
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.card:hover .post-actions {
+    opacity: 1;
+}
+
+.position-relative:hover .comment-actions {
+    opacity: 1;
+}
