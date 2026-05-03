@@ -289,7 +289,7 @@ def edit_post(request, post_id):
 
         return redirect("forum")
 
-    return render(request, "website/edit_post.html", {"post": post})
+    return redirect("forum")
 
 @login_required
 def edit_comment(request, comment_id):
