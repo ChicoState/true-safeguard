@@ -246,6 +246,29 @@ function savePost(event, postId, url) {
         cancelPostEdit(postId);
     });
 }
+
+function saveComment(event, commentId, url) {
+    event.preventDefault();
+
+    const textarea = document.getElementById("comment-textarea-" + commentId);
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "content=" + encodeURIComponent(textarea.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("comment-content-" + commentId).innerText = data.content;
+        document.getElementById("comment-meta-" + commentId).innerHTML = data.meta;
+        cancelCommentEdit(commentId);
+    });
+}
 </script>
 
 {% endblock %}

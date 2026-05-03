@@ -311,7 +311,7 @@ def edit_comment(request, comment_id):
 
         return redirect("forum")
 
-    return render(request, "website/edit_comment.html", {"comment": comment})
+    return redirect("forum")
 
 @login_required
 def delete_comment(request, comment_id):
