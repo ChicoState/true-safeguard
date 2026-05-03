@@ -17,14 +17,19 @@ Parent Community
     <hr class="border-light">
 
     {% if user.is_authenticated %}
-        <a href="{% url 'create_post' %}" class="btn btn-primary mb-3">Create Post</a>
+        <a href="{% url 'create_post' %}" class="create-post-float">
+            <span class="plus-icon">+</span>
+            <span class="create-post-text">Create Post</span>
+        </a>
     {% else %}
         <p><a href="{% url 'login' %}">Login</a> to create a post or comment.</p>
     {% endif %}
 
-    <form method="get" action="{% url 'forum' %}" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search by keyword or username..." value="{{ search_query }}">
+    <div class="forum-search mb-3">
+        <form method="get" action="{% url 'forum' %}" class="d-flex">
+            <input type="text" name="q" class="form-control me-2"
+                   placeholder="Search by keyword or username..."
+                   value="{{ search_query }}">
             {% if selected_category %}
                 <input type="hidden" name="category" value="{{ selected_category }}">
             {% endif %}
@@ -35,8 +40,8 @@ Parent Community
             {% if search_query %}
                 <a href="{% url 'forum' %}" class="btn btn-secondary">Clear</a>
             {% endif %}
-        </div>
-    </form>
+        </form>
+    </div>
 
     <div class="mb-3">
         <strong>Filter by category:</strong>
@@ -178,11 +183,7 @@ Parent Community
 <script>
 function toggleCommentForm(postId) {
     const form = document.getElementById("comment-form-" + postId);
-    if (form.style.display === "none") {
-        form.style.display = "block";
-    } else {
-        form.style.display = "none";
-    }
+    form.style.display = (form.style.display === "none") ? "block" : "none";
 }
 
 function showCommentEditForm(commentId) {

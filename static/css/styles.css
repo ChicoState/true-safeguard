@@ -6,3 +6,46 @@ body {
     color: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+.forum-search {
+    max-width: 600px;
+}
+
+.create-post-float {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50px;
+    background: #187ae2;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 0.25s ease;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.create-post-float:hover {
+    width: 165px;
+    color: white;
+}
+
+.plus-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.create-post-text {
+    white-space: nowrap;
+    margin-left: 10px;
+    display: none;
+}
+
+.create-post-float:hover .create-post-text {
+    display: inline;
+}

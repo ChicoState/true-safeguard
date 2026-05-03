@@ -44,11 +44,11 @@
                     <li class="dropdown-header fw-bold">Notifications</li>
 
                     {% for notification in recent_notifications %}
-                        <li>
-                            <a class="dropdown-item text-wrap" href="{% url 'notifications' %}">
+                        <li class="border-bottom">
+                            <a class="dropdown-item text-wrap py-2" href="{% url 'notifications' %}">
                                 {{ notification.message }}
                                 <br>
-                                <small class="text-muted">{{ notification.created_at }}</small>
+                                <small class="notification-time">{{ notification.created_at }}</small>
                             </a>
                         </li>
                     {% empty %}
