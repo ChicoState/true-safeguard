@@ -59,6 +59,12 @@ def resources(request):
             {'title': 'Chico Creek Nature Center', 'url': 'https://www.chicorec.gov/chico-creek-nature-center', 'desc': 'Nature ABCs, night hikes, and spring/summer camps located in Bidwell Park.'},
         ]
         }
+        'offline_activities': [
+        {'title': 'Chess & Strategy', 'desc': 'Builds patience and long-term planning skills.'},
+        {'title': 'Jigsaw Puzzles', 'desc': 'Great for tactile pattern recognition and family bonding.'},
+        {'title': 'Shared Reading', 'desc': 'Reduces stress and improves vocabulary away from blue light.'},
+        {'title': 'Butte County Library', 'desc': 'Visit the Chico branch for storytime and free book rentals.'},
+        ]
     ]
 
     return render(request, 'website/resources.html', {'categories': resource_data})
