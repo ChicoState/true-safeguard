@@ -19,22 +19,46 @@
             </div>
         {% endif %}
 
-        <form method="post">
+        <form method="post" autocomplete="off">
             {% csrf_token %}
 
             <div class="auth-field">
                 <label>Username</label>
-                <input type="text" name="username" required>
+                <input type="text" name="username" required autocomplete="off">
             </div>
 
-            <div class="auth-field">
+            <div class="auth-field" style="position: relative;">
                 <label>Password</label>
-                <input type="password" name="password1" required>
+
+                <input type="password" name="password1" id="password1" required>
+
+                <button type="button"
+                        onclick="togglePassword('password1', this)"
+                        style="position:absolute; right:10px; top:35px; background:none; border:none; color:white;">
+
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                        <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                    </svg>
+
+                </button>
             </div>
 
-            <div class="auth-field">
+            <div class="auth-field" style="position: relative;">
                 <label>Confirm Password</label>
-                <input type="password" name="password2" required>
+
+                <input type="password" name="password2" id="password2" required>
+
+                <button type="button"
+                        onclick="togglePassword('password2', this)"
+                        style="position:absolute; right:10px; top:35px; background:none; border:none; color:white;">
+
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                        <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                    </svg>
+
+                </button>
             </div>
 
             <button type="submit" class="auth-btn">Create Account</button>
@@ -47,4 +71,20 @@
 
     </div>
 </main>
+
+<script>
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const svg = btn.querySelector("svg");
+
+    if (input.type === "password") {
+        input.type = "text";
+        svg.style.opacity = "0.5";
+    } else {
+        input.type = "password";
+        svg.style.opacity = "1";
+    }
+}
+</script>
+
 {% endblock %}
