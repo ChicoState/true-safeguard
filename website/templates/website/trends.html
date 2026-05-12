@@ -1,122 +1,223 @@
-<!DOCTYPE html>
 {% extends "website/base.html" %}
+
 {% block navbar %}
-  {% include "navigation.html" %}
+{% include "navigation.html" %}
 {% endblock %}
 
 {% block content %}
-<html>
-<head>
-    <title>Trending - TrueSafeguard</title>
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #0f172a;
-            color: white;
-            margin: 0;
-        }
 
-        .header {
-            padding: 20px;
-            text-align: center;
-            background: #1e293b;
-            font-size: 24px;
-            font-weight: bold;
-        }
+<style>
+    .trends-page {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
 
-        .container {
-            padding: 20px;
-        }
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        .card {
-            background: #1e293b;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            color: #e5e7eb;
-        }
+    .header h1 {
+        color: #2d5a27;
+        margin-bottom: 10px;
+    }
 
-        .risk {
-            font-weight: bold;
-            margin-top: 10px;
-        }
+    .header p {
+        color: #555;
+        font-size: 1.1rem;
+    }
 
-        .high { color: #ef4444; }
-        .medium { color: #facc15; }
-    </style>
-</head>
-<body>
+    .card {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        color: #2d5a27;
+        margin-bottom: 10px;
+    }
+
+    .risk {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .high { color: #d62828; }
+    .medium { color: #f4a261; }
+    .low { color: #2a9d8f; }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="trends-page">
 
 <div class="header">
-    🔥 What's Trending (Safety Watch)
+    <h1>🔥 What's Trending (Safety Watch)</h1>
+    <p>
+        Helping parents stay informed about online trends, slang, and behaviors children may learn from social media.
+    </p>
 </div>
 
-<div class="container">
-
-    <div class="card">
-    <h2>TikTok Safety for Kids</h2>
+<div class="card">
+    <h2>Unsafe Media & Viral Challenges</h2>
     <p>
-        TikTok remains highly addictive and exposes children to inappropriate content and online predators.
+        Viral challenges often encourage risky behavior for views, likes, and online attention, especially among younger audiences.
     </p>
     <ul>
-        <li><strong>Key Concerns:</strong> Addiction, negative impact on developing brains, exposure to sexualized content, predators.</li>
-        <li><strong>Parental Guidance:</strong> Consider limiting screen time, use parental controls, monitor app usage, educate children about online risks, and discuss responsible behavior online.</li>
+        <li><strong>Key Concerns:</strong> Dangerous stunts, peer pressure, copying unsafe behavior from influencers.</li>
+        <li><strong>Parental Guidance:</strong> Talk openly about online pressure and explain that many viral trends are staged or unsafe in real life.</li>
     </ul>
     <div class="risk high">Risk: High</div>
-    </div>
+</div>
 
-    <div class="card">
-    <h2>Discord Safety for Teens</h2>
-    <p>
-        Teens use Discord for school and socializing, but public servers and poor moderation can expose them to grooming and inappropriate content.
-    </p>
-    <ul>
-        <li><strong>Key Concerns:</strong> AI moderation flaws, exposure to adult content, grooming risks, privacy concerns.</li>
-        <li><strong>Parental Guidance:</strong> Encourage open communication, set boundaries on server access, teach privacy awareness, and check in occasionally while respecting teens’ autonomy.</li>
-    </ul>
-    <div class="risk medium">Risk: Medium</div>
-    </div>
-
-    <div class="card">
-    <h2>AI-Generated Content</h2>
-    <p>
-        AI-created media are growing trends that confuse and addict children.
-    </p>
-    <ul>
-        <li><strong>Key Concerns:</strong> Exposure to deepfakes, automated low-quality kids videos, overstimulation, endless scrolling.</li>
-        <li><strong>Parental Guidance:</strong> Limit screen time, review content beforehand, teach kids critical media literacy, encourage offline activities.</li>
-    </ul>
-    <div class="risk high">Risk: High</div>
-    </div>
-
-    <div class="card">
-    <h2>Hidden Adult Content & Algorithm Loops</h2>
-    <p>
-        YouTube, TikTok, and other platforms can create “refresher loops” that expose children to inappropriate content unintentionally.
-    </p>
-    <ul>
-        <li><strong>Key Concerns:</strong> Inappropriate videos, addictive autoplay, lack of age filtering.</li>
-        <li><strong>Parental Guidance:</strong> Use platform content filters, enable “restricted mode”, watch videos with children occasionally, and discuss why some content is unsafe.</li>
-    </ul>
-    <div class="risk medium">Risk: Medium</div>
-    </div>
-
-    <div class="card">
+<div class="card">
     <h2>Brainrot / Short-Form Content</h2>
     <p>
-        Fast, repetitive videos on platforms like TikTok or YouTube Shorts can overstimulate kids and encourage addictive scrolling.
+        Fast, repetitive videos on TikTok, Reels, and YouTube Shorts can overstimulate children and encourage addictive scrolling habits.
     </p>
     <ul>
-        <li><strong>Key Concerns:</strong> Attention issues, excessive screen time, exposure to harmful or misleading content.</li>
-        <li><strong>Parental Guidance:</strong> Set daily screen limits, encourage offline activities, watch content together, and discuss why some videos aren’t safe or healthy.</li>
+        <li><strong>Key Concerns:</strong> Reduced attention span, excessive screen time, constant dopamine stimulation.</li>
+        <li><strong>Parental Guidance:</strong> Set screen limits, encourage offline activities, and monitor content habits together.</li>
     </ul>
     <div class="risk high">Risk: High</div>
-    </div>
+</div>
 
+<div class="card">
+    <h2>AI-Assisted Content Creation</h2>
+    <p>
+        AI tools are making it easier to create realistic videos, voices, music, and images that can spread misinformation quickly.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Deepfakes, fake voices, unrealistic expectations, misleading content.</li>
+        <li><strong>Parental Guidance:</strong> Teach children that online content may be edited or AI-generated and encourage critical thinking.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+</div>
+
+<div class="card">
+    <h2>TikTok Slang Decoder</h2>
+    <p>
+        Kids often use trending slang from TikTok and gaming communities that parents may not recognize.
+    </p>
+    <ul>
+        <li><strong>Examples:</strong> “NPC”, “mid”, “delulu”, “ate”, “no cap”, “cooked”.</li>
+        <li><strong>Key Concerns:</strong> Miscommunication, hidden meanings, online influence.</li>
+        <li><strong>Parental Guidance:</strong> Stay curious and ask kids what phrases mean instead of immediately reacting negatively.</li>
+    </ul>
+    <div class="risk low">Risk: Awareness</div>
+</div>
+
+<div class="card">
+    <h2>Shock Humor & Edgy Trends</h2>
+    <p>
+        Some online humor relies on offensive jokes, dark humor, or shock value to gain attention and reactions.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Bullying, desensitization to harmful language, toxic online behavior.</li>
+        <li><strong>Parental Guidance:</strong> Discuss empathy, respect, and why some jokes can negatively impact others.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
+
+<div class="card">
+    <h2>Hidden Meanings in Gaming Terms</h2>
+    <p>
+        Kids may repeat gaming slang or gestures without fully understanding their meaning or social impact.
+    </p>
+    <ul>
+        <li><strong>Examples:</strong> “Teabagging”, “griefing”, “rage quit”.</li>
+        <li><strong>Key Concerns:</strong> Toxic behavior becoming normalized, harassment, poor sportsmanship.</li>
+        <li><strong>Parental Guidance:</strong> Explain respectful online communication and encourage positive gaming habits.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
+
+<div class="card">
+    <h2>The Rise of Social Search</h2>
+    <p>
+        Many teens now use TikTok, Instagram, and YouTube instead of Google to search for information and advice.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Misinformation, unsafe trends, unreliable health or lifestyle advice.</li>
+        <li><strong>Parental Guidance:</strong> Teach children how to verify information and discuss trustworthy sources online.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
+
+<div class="card">
+    <h2>Community-Centric Platforms</h2>
+    <p>
+        Private Discord servers, group chats, and invite-only communities are becoming more popular among teens.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Exposure to predators, harmful communities, cyberbullying hidden from parents.</li>
+        <li><strong>Parental Guidance:</strong> Encourage transparency about online communities and discuss safe communication habits.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+</div>
+
+<div class="card">
+    <h2>Augmented Reality (AR) Filters</h2>
+    <p>
+        AR filters and appearance-changing effects are becoming more advanced across social media apps.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Unrealistic beauty standards, self-esteem issues, identity pressure.</li>
+        <li><strong>Parental Guidance:</strong> Remind children that many online appearances are heavily edited or filtered.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
+
+<div class="card">
+    <h2>Algorithm Loops & Endless Scrolling</h2>
+    <p>
+        Social media algorithms are designed to keep users scrolling by continuously recommending similar content.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Addiction, sleep disruption, unhealthy device habits.</li>
+        <li><strong>Parental Guidance:</strong> Encourage screen breaks, disable autoplay when possible, and create device-free times.</li>
+    </ul>
+    <div class="risk high">Risk: High</div>
+</div>
+
+<div class="card">
+    <h2>Online Validation Culture</h2>
+    <p>
+        Likes, followers, streaks, and views can strongly impact a child’s self-esteem and social pressure online.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Anxiety, comparison culture, emotional dependence on social media approval.</li>
+        <li><strong>Parental Guidance:</strong> Reinforce confidence outside social media and encourage real-world hobbies and friendships.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
+
+<div class="card">
+    <h2>The Subscription & Influencer Economy</h2>
+    <p>
+        Many influencers now push paid subscriptions, exclusive content, or product promotions directly to young audiences.
+    </p>
+    <ul>
+        <li><strong>Key Concerns:</strong> Manipulative marketing, parasocial relationships, overspending pressure.</li>
+        <li><strong>Parental Guidance:</strong> Teach kids how influencers monetize attention and discuss responsible spending habits.</li>
+    </ul>
+    <div class="risk medium">Risk: Medium</div>
+</div>
 
 </div>
 
-</body>
-</html>
 {% endblock %}
-s

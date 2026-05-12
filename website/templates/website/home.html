@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+
 <link rel="stylesheet" href="{% static 'website/home.css' %}">
 {% endblock %}
 
@@ -10,9 +11,11 @@ True Safeguard
 {% endblock %}
 
 {% block content %}
+
 <main>
 
-  {# Banner #}
+  <!-- Banner -->
+
   <section class="banner">
     <div class="banner-content">
       <h1>True Safeguard</h1>
@@ -20,7 +23,8 @@ True Safeguard
     </div>
   </section>
 
-  {# About Section #}
+  <!-- About Section -->
+
   <section class="about-section">
     <h2>About</h2>
     <p>
@@ -32,79 +36,75 @@ True Safeguard
     </p>
   </section>
 
-  {# Trending Media Section #}
-  <h2>Currently Trending Unsafe Media</h2>
+  <!-- Trending Media Section -->
+
+  <h2 class="section-title">Currently Trending Unsafe Media</h2>
 
   <section class="trend-carousel">
 
-    <button class="trend-btn prev">&#10094;</button>
+```
+<button class="trend-btn prev">&#10094;</button>
 
-    <div class="trend-track">
+<div class="trend-track">
 
-      {% for item in top_items %}
-        <div class="trend-slide">
-          <h3>{{ forloop.counter }}. {{ item.name }}</h3>
+  <div class="trend-slide">
+    <h3>1. Unsafe Media & Viral Challenges</h3>
+    <p class="trend-tags">Tags: TikTok, Viral Trends, Challenges</p>
+    <p class="trend-desc">
+      Viral challenges often encourage risky behavior or dangerous physical activities for online attention and engagement.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-          <p class="trend-tags">
-            Tags:
-            {% for tag in item.tags.all %}
-              {{ tag.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-          </p>
+  <div class="trend-slide">
+    <h3>2. Short-Form Video Dominance</h3>
+    <p class="trend-tags">Tags: TikTok, YouTube Shorts, Reels</p>
+    <p class="trend-desc">
+      Short-form videos are changing attention spans and promoting endless scrolling habits among children and teens.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-          <p class="trend-desc">{{ item.short_description }}</p>
+  <div class="trend-slide">
+    <h3>3. AI-Assisted Content Creation</h3>
+    <p class="trend-tags">Tags: AI, Deepfakes, Online Media</p>
+    <p class="trend-desc">
+      AI-generated videos, voices, and images are becoming harder to recognize and can spread misinformation quickly.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-          <button class="trend-more">See More</button>
-        </div>
-      {% empty %}
+  <div class="trend-slide">
+    <h3>4. The Rise of Social Search</h3>
+    <p class="trend-tags">Tags: Social Media, Information, Trends</p>
+    <p class="trend-desc">
+      Many teens now use TikTok and social media instead of Google to search for advice, news, and information.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-        <div class="trend-slide">
-          <h3>1. Placeholder Unsafe #1</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
+  <div class="trend-slide">
+    <h3>5. Community-Centric Platforms</h3>
+    <p class="trend-tags">Tags: Discord, Private Groups, Online Communities</p>
+    <p class="trend-desc">
+      Kids are increasingly joining private online communities where moderation and safety may be limited.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-        <div class="trend-slide">
-          <h3>2. Placeholder Unsafe #2</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
+  <div class="trend-slide">
+    <h3>6. Augmented Reality (AR) Integration</h3>
+    <p class="trend-tags">Tags: AR Filters, Snapchat, Instagram</p>
+    <p class="trend-desc">
+      AR filters and virtual experiences are becoming more realistic and influential on children’s self-image.
+    </p>
+    <button class="trend-more">See More</button>
+  </div>
 
-        <div class="trend-slide">
-          <h3>3. Placeholder Unsafe #3</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
+</div>
 
-        <div class="trend-slide">
-          <h3>4. Placeholder Unsafe #4</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
-
-        <div class="trend-slide">
-          <h3>5. Placeholder Unsafe #5</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
-
-        <div class="trend-slide">
-          <h3>6. Placeholder Unsafe #6</h3>
-          <p class="trend-tags">Tags: Placeholder</p>
-          <p class="trend-desc">This is a placeholder description.</p>
-          <button class="trend-more">See More</button>
-        </div>
-
-      {% endfor %}
-
-    </div>
-
-    <button class="trend-btn next">&#10095;</button>
+<button class="trend-btn next">&#10095;</button>
+```
 
   </section>
 
