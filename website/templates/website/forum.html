@@ -1,0 +1,274 @@
+{% extends "website/base.html" %}
+
+{% block title %}
+Parent Community
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 text-white">
+
+    <h1 class="fw-bold">Parent Community</h1>
+    <p class="fw-bold">Discuss online safety, share advice, and ask questions with other parents.</p>
+
+    <hr class="border-light">
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="create-post-float">
+            <span class="plus-icon">+</span>
+            <span class="create-post-text">Create Post</span>
+        </a>
+    {% endif %}
+
+    <!-- SEARCH -->
+    <div class="forum-search mb-3">
+        <form method="get" class="d-flex">
+            <input type="text" name="q" class="form-control me-2"
+                   placeholder="Search by keyword or username..."
+                   value="{{ search_query }}">
+            <button class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    <!-- FILTER -->
+    <div class="mb-3">
+        <strong>Filter by category:</strong>
+        <a href="{% url 'forum' %}" class="btn btn-sm btn-outline-primary">All</a>
+        {% for category in categories %}
+            <a href="?category={{ category }}" class="btn btn-sm btn-outline-primary">{{ category }}</a>
+        {% endfor %}
+    </div>
+
+    <!-- SORT -->
+    <div class="mb-3">
+        <strong>Sort by:</strong>
+        <a href="?sort=newest" class="btn btn-sm btn-outline-primary">Newest</a>
+        <a href="?sort=oldest" class="btn btn-sm btn-outline-primary">Oldest</a>
+        <a href="?sort=highest" class="btn btn-sm btn-outline-primary">Highest Rating</a>
+    </div>
+
+    {% for post in posts %}
+    <div class="card mb-3 bg-dark text-white border-light position-relative">
+        <div class="card-body">
+
+            <!-- VOTING -->
+            <div class="d-flex align-items-center mb-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'vote_post' post.id 1 %}" class="btn btn-success btn-sm me-1">▲</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-success btn-sm me-1">▲</a>
+                {% endif %}
+
+                <strong class="mx-2">{{ post.vote_score }}</strong>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'vote_post' post.id 0 %}" class="btn btn-danger btn-sm ms-1">▼</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-danger btn-sm ms-1">▼</a>
+                {% endif %}
+            </div>
+
+            {% if user == post.author %}
+            <div class="post-actions">
+                <button class="edit-btn" onclick="showPostEditForm({{ post.id }})">✎</button>
+
+                <form method="post"
+                      action="{% url 'delete_post' post.id %}"
+                      onsubmit="return confirmDeletePost();">
+                    {% csrf_token %}
+                    <button class="delete-x">&times;</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- POST VIEW -->
+            <div id="post-view-{{ post.id }}">
+                <span id="post-category-{{ post.id }}" class="badge bg-info text-dark">{{ post.category }}</span>
+
+                <h4 id="post-title-{{ post.id }}" class="fw-bold mt-2">{{ post.title }}</h4>
+                <p id="post-content-{{ post.id }}">{{ post.content }}</p>
+
+                <small id="post-meta-{{ post.id }}">
+                    Posted by
+                    <a href="{% url 'profile_detail' post.author.username %}">
+                        {{ post.author.username }}
+                    </a>
+                    on {{ post.created_at }}
+                </small>
+            </div>
+
+            <!-- POST EDIT -->
+            <div id="post-edit-{{ post.id }}" style="display:none;">
+                <form onsubmit="savePost(event, {{ post.id }}, '{% url 'edit_post' post.id %}')">
+                    {% csrf_token %}
+
+                    <input type="text"
+                           id="post-title-input-{{ post.id }}"
+                           class="form-control mb-2"
+                           value="{{ post.title }}">
+
+                    <select id="post-category-input-{{ post.id }}" class="form-control mb-2">
+                        <option value="Games">Games</option>
+                        <option value="Apps">Apps</option>
+                        <option value="Trends">Trends</option>
+                        <option value="Movies">Movies</option>
+                        <option value="Advice">Advice</option>
+                    </select>
+
+                    <textarea id="post-content-input-{{ post.id }}"
+                              class="form-control mb-2"
+                              rows="3">{{ post.content }}</textarea>
+
+                    <button class="btn btn-success btn-sm">Save</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelPostEdit({{ post.id }})">Cancel</button>
+                </form>
+            </div>
+
+            <hr class="border-light">
+
+            <h6>Comments</h6>
+
+            {% for comment in post.comments.all %}
+            <div class="border rounded p-2 mb-2 bg-dark text-white position-relative">
+
+                {% if user == comment.author %}
+                <div class="comment-actions">
+                    <button class="edit-btn" onclick="showCommentEditForm({{ comment.id }})">✎</button>
+
+                    <form method="post"
+                          action="{% url 'delete_comment' comment.id %}"
+                          onsubmit="return confirmDeleteComment();">
+                        {% csrf_token %}
+                        <button class="delete-x">&times;</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div id="comment-view-{{ comment.id }}">
+                    <p id="comment-content-{{ comment.id }}">{{ comment.content }}</p>
+                    <small id="comment-meta-{{ comment.id }}">
+                        Posted by
+                        <a href="{% url 'profile_detail' comment.author.username %}">
+                            {{ comment.author.username }}
+                        </a>
+                        on {{ comment.created_at }}
+                    </small>
+                </div>
+
+                <div id="comment-edit-{{ comment.id }}" style="display:none;">
+                    <form onsubmit="saveComment(event, {{ comment.id }}, '{% url 'edit_comment' comment.id %}')">
+                        {% csrf_token %}
+                        <textarea id="comment-textarea-{{ comment.id }}" class="form-control mb-2">{{ comment.content }}</textarea>
+                        <button class="btn btn-success btn-sm">Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelCommentEdit({{ comment.id }})">Cancel</button>
+                    </form>
+                </div>
+
+            </div>
+            {% empty %}
+            <p>No comments yet.</p>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+            <button class="btn btn-secondary btn-sm" onclick="toggleCommentForm({{ post.id }})">Add Comment</button>
+
+            <form method="post" action="{% url 'add_comment' post.id %}" id="comment-form-{{ post.id }}" style="display:none;">
+                {% csrf_token %}
+                <textarea name="content" class="form-control mb-2"></textarea>
+                <button class="btn btn-primary btn-sm">Post</button>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+<script>
+function confirmDeletePost() {
+    return confirm("Are you sure you want to delete this post?");
+}
+
+function confirmDeleteComment() {
+    return confirm("Are you sure you want to delete this comment?");
+}
+
+function toggleCommentForm(id) {
+    let f = document.getElementById("comment-form-" + id);
+    f.style.display = f.style.display === "none" ? "block" : "none";
+}
+
+function showPostEditForm(id) {
+    document.getElementById("post-view-" + id).style.display = "none";
+    document.getElementById("post-edit-" + id).style.display = "block";
+}
+
+function cancelPostEdit(id) {
+    document.getElementById("post-edit-" + id).style.display = "none";
+    document.getElementById("post-view-" + id).style.display = "block";
+}
+
+function showCommentEditForm(id) {
+    document.getElementById("comment-view-" + id).style.display = "none";
+    document.getElementById("comment-edit-" + id).style.display = "block";
+}
+
+function cancelCommentEdit(id) {
+    document.getElementById("comment-edit-" + id).style.display = "none";
+    document.getElementById("comment-view-" + id).style.display = "block";
+}
+
+function savePost(event, postId, url) {
+    event.preventDefault();
+
+    const titleInput = document.getElementById("post-title-input-" + postId);
+    const categoryInput = document.getElementById("post-category-input-" + postId);
+    const contentInput = document.getElementById("post-content-input-" + postId);
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "title=" + encodeURIComponent(titleInput.value) +
+              "&category=" + encodeURIComponent(categoryInput.value) +
+              "&content=" + encodeURIComponent(contentInput.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("post-title-" + postId).innerText = data.title;
+        document.getElementById("post-content-" + postId).innerText = data.content;
+        document.getElementById("post-category-" + postId).innerText = data.category;
+        document.getElementById("post-meta-" + postId).innerHTML = data.meta;
+        cancelPostEdit(postId);
+    });
+}
+
+function saveComment(event, commentId, url) {
+    event.preventDefault();
+
+    const textarea = document.getElementById("comment-textarea-" + commentId);
+    const csrfToken = event.target.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "content=" + encodeURIComponent(textarea.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("comment-content-" + commentId).innerText = data.content;
+        document.getElementById("comment-meta-" + commentId).innerHTML = data.meta;
+        cancelCommentEdit(commentId);
+    });
+}
+</script>
+
+{% endblock %}

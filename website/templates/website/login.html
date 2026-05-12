@@ -1,0 +1,67 @@
+{% extends "website/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'website/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="auth-container">
+    <div class="auth-box">
+
+        <h2>Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="auth-field">
+                <label>Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="auth-field" style="position: relative;">
+                <label>Password</label>
+
+                <input type="password" name="password" id="id_password" required class="form-control">
+
+                <button type="button"
+                        onclick="togglePassword('id_password', this)"
+                        style="position:absolute; right:10px; top:35px; background:none; border:none; color:white;">
+                    
+                    <!-- Eye Icon -->
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                        <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                    </svg>
+
+                </button>
+            </div>
+
+            <button type="submit" class="auth-btn">Login</button>
+        </form>
+
+        <p class="switch-text">
+            Don't have an account?
+            <a href="{% url 'register' %}" class="switch-link">Sign up</a>
+        </p>
+
+    </div>
+</main>
+
+<script>
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const svg = btn.querySelector("svg");
+
+    if (input.type === "password") {
+        input.type = "text";
+        svg.style.opacity = "0.5";
+    } else {
+        input.type = "password";
+        svg.style.opacity = "1";
+    }
+}
+</script>
+
+{% endblock %}

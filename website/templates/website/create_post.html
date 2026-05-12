@@ -1,0 +1,73 @@
+{% extends "website/base.html" %}
+
+{% block title %}
+Create Post
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-white">
+
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+
+            <div class="card bg-dark text-white border-light shadow">
+                <div class="card-body p-4">
+
+                    <h1 class="fw-bold mb-2">Create Post</h1>
+                    <p class="text-light mb-4">
+                        Share a question, concern, or advice with the parent community.
+                    </p>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Title</label>
+                            <input type="text"
+                                   name="title"
+                                   class="form-control"
+                                   placeholder="Enter a post title..."
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select a category</option>
+                                <option value="Games">Games</option>
+                                <option value="Apps">Apps</option>
+                                <option value="Trends">Trends</option>
+                                <option value="Movies">Movies</option>
+                                <option value="Advice">Advice</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Post</label>
+                            <textarea name="content"
+                                      class="form-control"
+                                      rows="6"
+                                      placeholder="Write your post..."
+                                      required></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Post
+                            </button>
+
+                            <a href="{% url 'forum' %}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

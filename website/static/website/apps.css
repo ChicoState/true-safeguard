@@ -9,16 +9,17 @@
 }
 
 /* Applies to everything, removes default margins and padding so we have a blank slate */
-* { 
+*:not(.badge, main) { 
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  /* padding: 0;
+  margin: 0; */
 }
 
-body {
+main {
+  padding: 10;
+  margin: 10;
   font: 16px / 24px "Rubik", sans-serif;
-  color: var(--black);
-  background: var(--white);
+  color: var(--white);
   margin: 50px;
 }
 
@@ -55,6 +56,16 @@ h2 {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 15%); /* Box shadow for dimensionality */
   scroll-snap-align: start; /* Snaps to left side of card */
   transition: all 0.2s; /* Smooth hover transitions */
+}
+
+.badge {
+  float: right; /* aligns text box to the right */
+  background: red;
+  color: white;
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
 .card:hover {
@@ -126,6 +137,7 @@ h2 {
     grid-column-gap: 40px;
   }
 }
+
 
 
 

@@ -14,6 +14,78 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'trends' %}">Trends</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'forum' %}">Community</a>
+            </li>
         </ul>
+
+    <div class="ms-auto">
+        {% if user.is_authenticated %}
+
+            <div class="dropdown d-inline-block me-2">
+                <button class="btn btn-outline-primary position-relative dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown">
+
+                    {% if unread_notifications_count > 0 %}
+                        <i class="bi bi-bell-fill"></i>
+                    {% else %}
+                        <i class="bi bi-bell"></i>
+                    {% endif %}
+
+                    {% if unread_notifications_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ unread_notifications_count }}
+                        </span>
+                    {% endif %}
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                    <li class="dropdown-header fw-bold">Notifications</li>
+
+                    {% for notification in recent_notifications %}
+                        <li class="border-bottom">
+                            <a class="dropdown-item text-wrap py-2" href="{% url 'notifications' %}">
+                                {{ notification.message }}
+                                <br>
+                                <small class="notification-time">{{ notification.created_at }}</small>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li>
+                            <span class="dropdown-item text-muted">No notifications</span>
+                        </li>
+                    {% endfor %}
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <a class="dropdown-item text-center fw-bold" href="{% url 'notifications' %}">
+                            View all
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <a href="{% url 'profile_detail' user.username %}" class="btn btn-outline-secondary me-2">
+                {{ user.username }}
+            </a>
+
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger ms-3">
+                    Logout
+                </button>
+            </form>
+
+        {% else %}
+            <a href="{% url 'login' %}" 
+               class="btn ms-3"
+               style="background:#187ae2; color:white; border:none;">
+               Login
+            </a>
+        {% endif %}
     </div>
+
+  </div>
 </nav>
