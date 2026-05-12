@@ -75,3 +75,20 @@ class ResourceContentTests(TestCase):
         self.assertContains(response, "https://www.buttecounty.net/148/Library")
 
 
+class BlacklistPageTests(TestCase):
+    def test_blacklist_page_loads(self):
+        "Verify page loads successfully."
+        response = self.client.get(reverse('blacklist'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_blacklist_template_used(self):
+        "Verify that the correct template is used for the blacklist page."
+        response = self.client.get(reverse('blacklist'))
+        self.assertTemplateUsed(response, 'website/blacklist.html')
+
+    def test_blacklist_css_loaded(self):
+        "Verify that blacklist CSS file is referenced in the page."
+        response = self.client.get(reverse('blacklist'))
+        self.assertContains(response, 'blacklist.css', html=False)
+
+
