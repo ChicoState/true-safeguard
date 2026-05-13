@@ -12,9 +12,6 @@ from .models import BlacklistItem, ForumPost, PostVote, Comment, Profile, Notifi
 def home(request):
     return render(request, 'website/home.html')
 
-def apps(request):
-    return render(request, 'website/apps.html')
-
 def trends(request):
     return render(request, 'website/trends.html')
 
