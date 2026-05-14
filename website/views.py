@@ -41,7 +41,7 @@ def resources(request):
             'category_name': 'Detecting AI & Synthetic Media',
             'category_info': 'In an era of deepfakes...',
             'links': [
-                {'title': 'Spotting Deepfakes', 'url': 'https://www.mit.edu', 'desc': 'Key visual markers...'},
+                {'title': 'Spotting Deepfakes', 'url': 'https://www.media.mit.edu/projects/detect-fakes/overview/', 'desc': 'Key visual markers...'},
                 {'title': 'Fact-Checking for Kids', 'url': 'https://www.commonsensemedia.org', 'desc': 'Tools to help children...'},
             ]
         },
